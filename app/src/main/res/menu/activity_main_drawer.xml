@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/news"
+            android:title="Latest News" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/training"
+            android:title="Training Tips" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/humor"
+            android:title="Pet Humor" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/health"
+            android:title="Pet Health" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>

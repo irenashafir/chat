@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "788624266347",
+    "firebase_url": "https://vetstreet-16097.firebaseio.com",
+    "project_id": "vetstreet-16097",
+    "storage_bucket": "vetstreet-16097.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788624266347:android:650db450e794484a",
+        "android_client_info": {
+          "package_name": "shafir.irena.vetstreet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "788624266347-0kr19i7k5g0sc9q65kdeg8dp6tquehlv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "shafir.irena.vetstreet",
+            "certificate_hash": "f78ded3b4c32550fe4f0a33586d7e57a05821825"
+          }
+        },
+        {
+          "client_id": "788624266347-iu33cb7uoo72ccpjjm4j7u1junl7gqvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH68W-MriAmxznZgyfcLpP5VCI2B6_8qM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "788624266347-iu33cb7uoo72ccpjjm4j7u1junl7gqvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
