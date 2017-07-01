@@ -5,31 +5,42 @@
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/news"
-            android:title="Latest News" />
+            android:title="@string/news_" />
         <item
             android:id="@+id/nav_gallery"
-            android:icon="@drawable/training"
-            android:title="Training Tips" />
+            android:icon="@drawable/tip"
+            android:title="@string/tips_" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/humor"
-            android:title="Pet Humor" />
+            android:title="@string/pet_geeks_" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/health"
-            android:title="Pet Health" />
+            android:title="@string/health_" />
+
+        <item
+            android:id="@+id/favorite"
+            android:icon="@drawable/favorite"
+            android:title="@string/favorite" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="@string/share" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="@string/send" />
+
+            <item
+                android:id="@+id/rate"
+                android:icon="@drawable/favorite"
+                android:title="@string/rate_us" />
+
         </menu>
     </item>
 

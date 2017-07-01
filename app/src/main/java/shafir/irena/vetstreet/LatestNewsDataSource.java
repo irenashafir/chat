@@ -1,16 +1,11 @@
 package shafir.irena.vetstreet;
 
-import android.net.sip.SipAudioCall;
-import android.util.Log;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -60,10 +55,13 @@ public class LatestNewsDataSource {
             String link = e.getElementsByTag("link").get(0).text();
             String description = e.getElementsByTag("description").get(0).text();
 
-            String image = String.valueOf(R.mipmap.vetstreet_logo);
+            String image;
 
-            if (e.getElementsByTag("enclosure").attr("url") == null) {
+            if (e.getElementsByTag("enclosure").attr("url") != null) {
                 image = e.getElementsByTag("enclosure").attr("url");
+            }
+            else {
+                image = String.valueOf(R.mipmap.vetstreet_logo);
             }
 
 

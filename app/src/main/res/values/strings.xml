@@ -18,4 +18,15 @@
     <string name="dog_news">Dog News</string>
     <string name="cat_news">Cat News</string>
     <string name="dr_marty_becker">Dr. Marty Becker</string>
+    <string name="description">description</string>
+    <string name="title">Title</string>
+    <string name="news_">News</string>
+    <string name="tips_">Tips</string>
+    <string name="pet_geeks_">Pet Geeks</string>
+    <string name="health_">Health</string>
+    <string name="favorite">Favorite</string>
+    <string name="communicate">Communicate</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
+    <string name="rate_us">Rate Us</string>
 </resources>

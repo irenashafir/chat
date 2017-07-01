@@ -16,13 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.Scopes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private FirebaseUser user;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mAuth = FirebaseAuth.getInstance();
-
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new MainFragment()).commit();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -180,12 +181,5 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void news(View view) {
-        Intent intent = new Intent(this, NewsActivity.class);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else
-            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
 
-    }
 }

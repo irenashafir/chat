@@ -4,21 +4,19 @@ package shafir.irena.vetstreet;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.LayoutInflaterFactory;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.bumptech.glide.Glide;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 
 /**
@@ -80,6 +78,7 @@ public class LatestNewsFragment extends Fragment implements LatestNewsDataSource
 
         @Override
         public void onBindViewHolder(LatestNewsViewHolder holder, int position) {
+
             LatestNewsDataSource.LatestNews ln = data.get(position);
             holder.tvTitle.setText(ln.getTitle());
             holder.tvDescription.setText(ln.getDescription());
@@ -94,15 +93,9 @@ public class LatestNewsFragment extends Fragment implements LatestNewsDataSource
         public int getItemCount() {
             return data.size();
         }
-        // create ViewHolder
-        // getCount
-        // bind view holder to the data
-        // properties:
 
 
-
-
-        class LatestNewsViewHolder extends RecyclerView.ViewHolder{
+        class LatestNewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvTitle;
             TextView tvDescription;
             ImageView ivImage;
@@ -115,9 +108,26 @@ public class LatestNewsFragment extends Fragment implements LatestNewsDataSource
                 tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
                 ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
 
+
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (context instanceof AppCompatActivity){
+                    FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
+
+                    int adapterPosition = getAdapterPosition();
+                    LatestNewsDataSource.LatestNews latestNews = data.get(adapterPosition);
+
+                    DetailedNewsFragment detailedNewsFragment = DetailedNewsFragment.newInstance(latestNews.getLink());
+                    fm.beginTransaction().replace(R.id.mainFrame, detailedNewsFragment).addToBackStack("Latest News").commit();
+
+                }
             }
         }
 
     }
+
 
 }
