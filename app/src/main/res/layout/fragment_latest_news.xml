@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:id="@+id/rvLatestNews"
     android:layout_height="match_parent"
-    tools:context="shafir.irena.vetstreet.LatestNewsFragment"
+    tools:context="shafir.irena.vetstreet.PetNewsFragment"
     tools:listitem="@layout/latest_news"
 
 

@@ -161,17 +161,28 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.cat_101) {
+            String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                    "kitten-training:new-cat-owner-guide:kittens:kitten-training:kitten-health-conditions";
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url)).commit();
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.puppy_101) {
+            String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                    "puppy-training:new-dog-owner-guide:puppies:puppy-issues:puppy-health-conditions";
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url)).commit();
+
+        } else if (id == R.id.favorite) {
 
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
+
+        }
+        else if (id == R.id.rate){
 
         }
 

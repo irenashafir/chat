@@ -22,14 +22,24 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LatestNewsFragment extends Fragment implements LatestNewsDataSource.onLatestNewsArrivedListener{
+public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLatestNewsArrivedListener{
 
+    private static final String ARG_URL = "url address";
+    private static final java.lang.String ARG_TYPE = "url type";
     RecyclerView rvLatestNews;
 
-    public LatestNewsFragment() {
+    public PetNewsFragment() {
         // Required empty public constructor
     }
 
+
+    public static PetNewsFragment newInstance(String address) {
+        Bundle args = new Bundle();
+        args.putString(ARG_URL,address);
+        PetNewsFragment fragment = new PetNewsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,19 +48,22 @@ public class LatestNewsFragment extends Fragment implements LatestNewsDataSource
         View v = inflater.inflate(R.layout.fragment_latest_news, container, false);
         rvLatestNews = (RecyclerView) v.findViewById(R.id.rvLatestNews);
 
-        LatestNewsDataSource.getLatestNews(this);
+        String urlAddress = getArguments().getString(ARG_URL, null);
+
+        PetNewsDataSource.getNews(this, urlAddress);
+
         rvLatestNews.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return v;
     }
 
     @Override
-    public void onLatestNewsArrived(final List<LatestNewsDataSource.LatestNews> data, final Exception e) {
+    public void onLatestNewsArrived(final List<PetNewsDataSource.petNews> data, final Exception e) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (e == null){
-                    rvLatestNews.setAdapter(new LatestNewsAdapter(getActivity(), data));
+                    rvLatestNews.setAdapter(new PetNewsAdapter(getActivity(), data));
 
                 }
             }
@@ -58,28 +71,26 @@ public class LatestNewsFragment extends Fragment implements LatestNewsDataSource
     }
 
 
-
-    static class LatestNewsAdapter extends RecyclerView.Adapter<LatestNewsAdapter.LatestNewsViewHolder>{
+    static class PetNewsAdapter extends RecyclerView.Adapter<PetNewsAdapter.PetNewsViewHolder>{
         private LayoutInflater inflater;
         private Context context;
-        private List<LatestNewsDataSource.LatestNews> data;
+        private List<PetNewsDataSource.petNews> data;
 
-        public LatestNewsAdapter(Context context, List<LatestNewsDataSource.LatestNews> data) {
+        public PetNewsAdapter(Context context, List<PetNewsDataSource.petNews> data) {
             this.inflater = LayoutInflater.from(context);
             this.context = context;
             this.data = data;
         }
 
         @Override
-        public LatestNewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public PetNewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = inflater.inflate(R.layout.latest_news, parent, false);
-            return new LatestNewsViewHolder(v);
+            return new PetNewsViewHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(LatestNewsViewHolder holder, int position) {
-
-            LatestNewsDataSource.LatestNews ln = data.get(position);
+        public void onBindViewHolder(PetNewsViewHolder holder, int position) {
+            PetNewsDataSource.petNews ln = data.get(position);
             holder.tvTitle.setText(ln.getTitle());
             holder.tvDescription.setText(ln.getDescription());
             if (ln.getImage() != null) {
@@ -95,19 +106,17 @@ public class LatestNewsFragment extends Fragment implements LatestNewsDataSource
         }
 
 
-        class LatestNewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        class PetNewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvTitle;
             TextView tvDescription;
             ImageView ivImage;
 
 
-            public LatestNewsViewHolder(View itemView) {
+            public PetNewsViewHolder(View itemView) {
                 super(itemView);
-
                 tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
                 tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
                 ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
-
 
                 itemView.setOnClickListener(this);
             }
@@ -118,10 +127,11 @@ public class LatestNewsFragment extends Fragment implements LatestNewsDataSource
                     FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
 
                     int adapterPosition = getAdapterPosition();
-                    LatestNewsDataSource.LatestNews latestNews = data.get(adapterPosition);
+                    PetNewsDataSource.petNews petNews = data.get(adapterPosition);
 
-                    DetailedNewsFragment detailedNewsFragment = DetailedNewsFragment.newInstance(latestNews.getLink());
-                    fm.beginTransaction().replace(R.id.mainFrame, detailedNewsFragment).addToBackStack("Latest News").commit();
+                    petWebViewFragment petWebViewFragment = shafir.irena.vetstreet.petWebViewFragment.newInstance(petNews.getLink());
+                    fm.beginTransaction().replace(R.id.mainContainer,
+                            petWebViewFragment).addToBackStack("Full Article").commit();
 
                 }
             }

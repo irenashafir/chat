@@ -29,4 +29,8 @@
     <string name="share">Share</string>
     <string name="send">Send</string>
     <string name="rate_us">Rate Us</string>
+    <string name="home">Home</string>
+    <string name="cat_101">Cat 101</string>
+    <string name="kitten_101">Kitten 101</string>
+    <string name="puppy_101">Puppy 101</string>
 </resources>

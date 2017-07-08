@@ -3,26 +3,23 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/home"
             android:icon="@drawable/news"
-            android:title="@string/news_" />
+            android:title="@string/home" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/cat_101"
             android:icon="@drawable/tip"
-            android:title="@string/tips_" />
+            android:title="@string/kitten_101" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/puppy_101"
             android:icon="@drawable/humor"
-            android:title="@string/pet_geeks_" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/health"
-            android:title="@string/health_" />
+            android:title="@string/puppy_101" />
 
         <item
             android:id="@+id/favorite"
             android:icon="@drawable/favorite"
             android:title="@string/favorite" />
+
     </group>
 
     <item android:title="@string/communicate">
@@ -37,9 +34,10 @@
                 android:title="@string/send" />
 
             <item
-                android:id="@+id/rate"
+                android:id="@+id/Rate"
                 android:icon="@drawable/favorite"
-                android:title="@string/rate_us" />
+                android:title="Rate Us" />
+
 
         </menu>
     </item>

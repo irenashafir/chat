@@ -34,6 +34,10 @@ public class MainFragment extends Fragment {
     ConstraintLayout mainContainer;
     Unbinder unbinder;
 
+    private static final String ARG_URL_LATEST = "url latest news";
+    private static final String ARG_URL = "url";
+
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -64,21 +68,188 @@ public class MainFragment extends Fragment {
         btnNews.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().beginTransaction().replace(R.id.mainFrame, new LatestNewsFragment())
+                String url = "http://www.vetstreet.com/rss/dl.jsp";
+
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnHealth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:dog-news";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnTips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=speciesTags:cats";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnPetGeeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed" +
+                        ".jsp?Categories=siteContentTags:marty-becker-health:marty-becker-on-health";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+    }
+
+    @OnClick(R.id.btnHealth)
+    public void onBtnHealthClicked() {
+        btnNews.setText("Pet Health");
+        btnHealth.setText("Pets and Exercise");
+        btnTips.setText("Alternative Medicine");
+        btnPetGeeks.setText("Nutrition Information");
+
+        btnNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:symptom-center" +
+                        ":health-issues:seasonal-dangers:symptoms:adult-dog-health-conditions,dogBreedTags=health-issues";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnHealth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:exercise";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnTips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=" +
+                        "siteContentTags:complementary-and-alternative-medicine:holistic-and-natural-care";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+            btnTips.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                            "diets:digestive-care:nutrition-issues,conditionTags:weight-management";
+                    getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                            .addToBackStack("main").commit();
+                }
+            });
+    }
+
+    @OnClick(R.id.btnTips)
+    public void onBtnTipsClicked() {
+        btnNews.setText("The Perfect Dog or Cat Breed for You");
+        btnHealth.setText("Pet Safety");
+        btnTips.setText("Training Tips");
+        btnPetGeeks.setText("Traveling with Your Pet");
+
+
+        btnNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=dogBreedTags:breed-" +
+                        "information,siteContentTags:breed-information:choosing-a-dog:choosing-a-cat";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnHealth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                        "training:pet-food-recall:pet-safety";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnTips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:training:cat-training:" +
+                        "dog-training:crate-training:kitten-training:puppy-training:house-training";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnPetGeeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:travel";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
                         .addToBackStack("main").commit();
             }
         });
     }
 
-    @OnClick(R.id.btnHealth)
-    public void onBtnHealthClicked() {
-    }
-
-    @OnClick(R.id.btnTips)
-    public void onBtnTipsClicked() {
-    }
-
     @OnClick(R.id.btnPetGeeks)
     public void onBtnPetGeeksClicked() {
+        btnNews.setText("Why Does My Pet...");
+        btnHealth.setText("Pet Humor");
+        btnTips.setText("Celebrities and Pets");
+        btnPetGeeks.setText("Pet Videos");
+
+
+        btnNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                        "why-does-my-dog:why-does-my-cat:why-does-my-bird";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnHealth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                        "funny-animals:funny-cat-pictures:funny-cat-videos:" +
+                        "funny-dog-pictures:funny-dog-videos:funny-stories:funny-animal-videos:humor";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+        btnTips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                        "celebrities-and-pets:celebrity-pets";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
+        btnPetGeeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:animal-videos:cat-videos:" +
+                        "dog-videos:funny-cat-videos:funny-dog-videos:funny-animal-videos";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
+
     }
+
+
+
 }
