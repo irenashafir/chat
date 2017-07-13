@@ -7,13 +7,9 @@
             android:icon="@drawable/news"
             android:title="@string/home" />
         <item
-            android:id="@+id/cat_101"
+            android:id="@+id/pet_shop"
             android:icon="@drawable/tip"
-            android:title="@string/kitten_101" />
-        <item
-            android:id="@+id/puppy_101"
-            android:icon="@drawable/humor"
-            android:title="@string/puppy_101" />
+            android:title="Pet Shop" />
 
         <item
             android:id="@+id/favorite"
@@ -34,7 +30,7 @@
                 android:title="@string/send" />
 
             <item
-                android:id="@+id/Rate"
+                android:id="@+id/rate"
                 android:icon="@drawable/favorite"
                 android:title="Rate Us" />
 

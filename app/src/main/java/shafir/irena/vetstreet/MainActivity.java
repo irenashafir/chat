@@ -1,5 +1,6 @@
 package shafir.irena.vetstreet;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,17 +11,24 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
@@ -28,6 +36,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import shafir.irena.vetstreet.fragments.petWebViewFragment;
+import shafir.irena.vetstreet.models.User;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -56,25 +66,69 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 1;
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
-        @Override
-        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                                .setPermissions(Arrays.asList(Scopes.PROFILE, Scopes.EMAIL)).build(),
-                        new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                        new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user == null) {
+                    List<AuthUI.IdpConfig> providers = Arrays.asList(
+                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                                    .setPermissions(Arrays.asList(Scopes.PROFILE, Scopes.EMAIL)).build(),
+                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                            new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
 
-                Intent intent = AuthUI.getInstance().createSignInIntentBuilder()
-                        .setLogo(R.mipmap.logo_big)
-                        .setAvailableProviders(providers)
-                        .build();
-                startActivityForResult(intent, RC_SIGN_IN);
+                    Intent intent = AuthUI.getInstance().createSignInIntentBuilder()
+                            .setLogo(R.mipmap.logo_big)
+                            .setAvailableProviders(providers)
+                            .build();
+                    startActivityForResult(intent, RC_SIGN_IN);
+                }
+            }
+        };
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse idpResponse = IdpResponse.fromResultIntent(intent);
+            if (requestCode == RESULT_OK) {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                User user = new User(currentUser);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+                reference.setValue(user);
+            } else if (idpResponse != null) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setTitle("Sign In").setMessage("do you wish to try again or enter anonymously?");
+
+                        dialog.setPositiveButton("try again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            return;
+                            }
+                        });
+                dialog.setNegativeButton("enter anonymously", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                           if (task.isSuccessful()){
+
+                               FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                               User user = new User(currentUser);
+                               DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+                               reference.setValue(user);
+
+                               Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
+                           }
+                           else
+                               Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
             }
         }
-    };
-
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +139,11 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
+
         getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new MainFragment()).commit();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +167,6 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         mAuth.addAuthStateListener(mAuthListener);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -119,7 +174,6 @@ public class MainActivity extends AppCompatActivity
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -129,14 +183,12 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -146,6 +198,18 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.action_settings:
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+
+                  return true;
+            case R.id.about:
+                petWebViewFragment petWebViewFragment =  new petWebViewFragment();
+                shafir.irena.vetstreet.fragments.petWebViewFragment shoppingFragment =
+                        petWebViewFragment.newInstance("http://www.vetstreet.com/about");
+                getSupportFragmentManager().beginTransaction().replace
+                        (R.id.mainFrame, shoppingFragment ).addToBackStack("main").commit();
+                return true;
+            case R.id.contact:
+
                 return true;
             case R.id.sign_out:
                 mAuth.getInstance().signOut();
@@ -163,26 +227,25 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.home) {
             Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            if (intent.resolveActivity(getPackageManager()) != null){
+                startActivity(intent);
+            }
 
-        } else if (id == R.id.cat_101) {
-            String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
-                    "kitten-training:new-cat-owner-guide:kittens:kitten-training:kitten-health-conditions";
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url)).commit();
-
-        } else if (id == R.id.puppy_101) {
-            String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
-                    "puppy-training:new-dog-owner-guide:puppies:puppy-issues:puppy-health-conditions";
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url)).commit();
-
+        } else if (id == R.id.pet_shop) {
+            Intent intent = new Intent(this, ShopActivity.class);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
         } else if (id == R.id.favorite) {
+
 
         } else if (id == R.id.nav_share) {
 
+
         } else if (id == R.id.nav_send) {
 
-        }
-        else if (id == R.id.rate){
+
+        } else if (id == R.id.rate){
 
         }
 

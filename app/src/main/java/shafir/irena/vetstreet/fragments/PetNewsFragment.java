@@ -1,4 +1,4 @@
-package shafir.irena.vetstreet;
+package shafir.irena.vetstreet.fragments;
 
 
 import android.content.Context;
@@ -18,11 +18,14 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import shafir.irena.vetstreet.PetNewsDataSource;
+import shafir.irena.vetstreet.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLatestNewsArrivedListener{
+public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLatestNewsArrivedListener {
 
     private static final String ARG_URL = "url address";
     private static final java.lang.String ARG_TYPE = "url type";
@@ -45,7 +48,7 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_latest_news, container, false);
+        View v = inflater.inflate(R.layout.fragment_recycler, container, false);
         rvLatestNews = (RecyclerView) v.findViewById(R.id.rvLatestNews);
 
         String urlAddress = getArguments().getString(ARG_URL, null);
@@ -84,7 +87,7 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
 
         @Override
         public PetNewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = inflater.inflate(R.layout.latest_news, parent, false);
+            View v = inflater.inflate(R.layout.recycler_template, parent, false);
             return new PetNewsViewHolder(v);
         }
 
@@ -129,7 +132,7 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
                     int adapterPosition = getAdapterPosition();
                     PetNewsDataSource.petNews petNews = data.get(adapterPosition);
 
-                    petWebViewFragment petWebViewFragment = shafir.irena.vetstreet.petWebViewFragment.newInstance(petNews.getLink());
+                    petWebViewFragment petWebViewFragment = shafir.irena.vetstreet.fragments.petWebViewFragment.newInstance(petNews.getLink());
                     fm.beginTransaction().replace(R.id.mainContainer,
                             petWebViewFragment).addToBackStack("Full Article").commit();
 

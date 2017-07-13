@@ -1,4 +1,4 @@
-package shafir.irena.vetstreet;
+package shafir.irena.vetstreet.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

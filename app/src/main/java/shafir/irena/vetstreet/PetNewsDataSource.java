@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import shafir.irena.vetstreet.utils.StreamIO;
+
 /**
  * Created by irena on 19/06/2017.
  */
@@ -74,6 +76,7 @@ public class PetNewsDataSource {
         }
         return data;
     }
+
     public static class petNews {
     private String title;
         private String link;

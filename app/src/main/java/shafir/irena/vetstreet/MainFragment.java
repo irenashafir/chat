@@ -9,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import shafir.irena.vetstreet.fragments.PetNewsFragment;
 
 
 /**
@@ -36,6 +38,10 @@ public class MainFragment extends Fragment {
 
     private static final String ARG_URL_LATEST = "url latest news";
     private static final String ARG_URL = "url";
+    @BindView(R.id.cvPuppy)
+    CircularImageView cvPuppy;
+    @BindView(R.id.cvKitten)
+    CircularImageView cvKitten;
 
 
     public MainFragment() {
@@ -68,6 +74,7 @@ public class MainFragment extends Fragment {
         btnNews.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String url = "http://www.vetstreet.com/rss/dl.jsp";
 
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
@@ -141,15 +148,15 @@ public class MainFragment extends Fragment {
             }
         });
 
-            btnTips.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
-                            "diets:digestive-care:nutrition-issues,conditionTags:weight-management";
-                    getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                            .addToBackStack("main").commit();
-                }
-            });
+        btnTips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                        "diets:digestive-care:nutrition-issues,conditionTags:weight-management";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
+                        .addToBackStack("main").commit();
+            }
+        });
     }
 
     @OnClick(R.id.btnTips)
@@ -251,5 +258,21 @@ public class MainFragment extends Fragment {
     }
 
 
+    @OnClick({R.id.cvPuppy, R.id.cvKitten})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.cvPuppy:
+                String puppy = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                        "puppy-training:new-dog-owner-guide:puppies:puppy-issues:puppy-health-conditions";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(puppy)).commit();
+                break;
+            case R.id.cvKitten:
+                String kitten = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
+                        "kitten-training:new-cat-owner-guide:kittens:kitten-training:kitten-health-conditions";
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(kitten))
+                        .addToBackStack("main").commit();
 
+                break;
+        }
+    }
 }
