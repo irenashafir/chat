@@ -33,4 +33,6 @@
     <string name="cat_101">Cat 101</string>
     <string name="kitten_101">Kitten 101</string>
     <string name="puppy_101">Puppy 101</string>
+    <string name="personal_area">Personal Area</string>
+    <string name="title_activity_find_avet">Map</string>
 </resources>

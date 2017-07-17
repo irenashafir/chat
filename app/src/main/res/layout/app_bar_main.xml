@@ -22,13 +22,4 @@
 
     <include layout="@layout/content_main" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="69dp"
-        android:layout_height="59dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/bootstrap_brand_secondary_fill"
-        app:srcCompat="@mipmap/vetstreet_logo" />
-
 </android.support.design.widget.CoordinatorLayout>

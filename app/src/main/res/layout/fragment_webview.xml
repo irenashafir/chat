@@ -10,13 +10,11 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fbLike"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_x="305dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="24dp"
         android:backgroundTint="#ff5"
-        android:layout_y="432dp"
         android:clickable="true"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"

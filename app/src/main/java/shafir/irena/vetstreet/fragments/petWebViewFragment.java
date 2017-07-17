@@ -68,7 +68,10 @@ public class petWebViewFragment extends Fragment {
     }
 
     public void onFabClicked(){
-        
+        final String url = getArguments().getString(ARG_URL);
+
+
+
     }
 
 

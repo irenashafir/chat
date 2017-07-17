@@ -1,13 +1,13 @@
 package shafir.irena.vetstreet;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -46,8 +47,6 @@ public class MainActivity extends AppCompatActivity
     ConstraintLayout mainContainer;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
     @BindView(R.id.ivDoc)
     ImageView ivDoc;
     @BindView(R.id.ivKids)
@@ -59,76 +58,39 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private FirebaseUser user;
-
     private static final int RC_SIGN_IN = 1;
+
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user == null) {
-                    List<AuthUI.IdpConfig> providers = Arrays.asList(
-                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                                    .setPermissions(Arrays.asList(Scopes.PROFILE, Scopes.EMAIL)).build(),
-                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                            new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
+                    mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()){
+                                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                                User user = new User(currentUser);
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+                                reference.setValue(user);
 
-                    Intent intent = AuthUI.getInstance().createSignInIntentBuilder()
-                            .setLogo(R.mipmap.logo_big)
-                            .setAvailableProviders(providers)
-                            .build();
-                    startActivityForResult(intent, RC_SIGN_IN);
+                                Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         };
 
-    @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse idpResponse = IdpResponse.fromResultIntent(intent);
-            if (requestCode == RESULT_OK) {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                User user = new User(currentUser);
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                reference.setValue(user);
-            } else if (idpResponse != null) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                dialog.setTitle("Sign In").setMessage("do you wish to try again or enter anonymously?");
 
-                        dialog.setPositiveButton("try again", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            return;
-                            }
-                        });
-                dialog.setNegativeButton("enter anonymously", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                           if (task.isSuccessful()){
 
-                               FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                               User user = new User(currentUser);
-                               DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                               reference.setValue(user);
-
-                               Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
-                           }
-                           else
-                               Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,14 +105,6 @@ public class MainActivity extends AppCompatActivity
 
         getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new MainFragment()).commit();
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -208,11 +162,64 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction().replace
                         (R.id.mainFrame, shoppingFragment ).addToBackStack("main").commit();
                 return true;
+
             case R.id.contact:
+                View view = View.inflate(this, R.layout.contact_us, null);
+                final AlertDialog.Builder contactBuilder = new AlertDialog.Builder(this);
+                contactBuilder.setView(view);
+
+                final EditText etText = (EditText) view.findViewById(R.id.etText);
+
+                contactBuilder.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final String text = etText.getText().toString();
+
+                        if (text != null) {
+                            Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+                            sendIntent.setType("message/rfc822");
+                            sendIntent.setData(Uri.parse("mailto:"));
+                            sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"irena_shafir@walla.co.il"});
+                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Contact Us");
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+
+                            startActivity(Intent.createChooser(sendIntent, "Send Email"));
+                            Toast.makeText(MainActivity.this, "Sent", Toast.LENGTH_SHORT).show();
+
+                        } else if (text == null) {
+                            Toast.makeText(MainActivity.this, "No Message", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                contactBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                contactBuilder.create();
+                contactBuilder.show();
 
                 return true;
             case R.id.sign_out:
-                mAuth.getInstance().signOut();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Are You Sure You Want to Sign Out?");
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAuth.getInstance().signOut();
+                    }
+                });
+                builder.show();
+                return true;
+            case R.id.sign_in:
+                    signIn();
                 return true;
         }
 
@@ -239,13 +246,35 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.favorite) {
 
 
+        } else if (id == R.id.vets){
+            Intent vetIntent = new Intent(this, FindAVetActivity.class);
+            if (vetIntent.resolveActivity(getPackageManager()) != null){
+                startActivity(vetIntent);
+            }
+
+
         } else if (id == R.id.nav_share) {
 
 
         } else if (id == R.id.nav_send) {
 
+            // send app
+            // send article
 
         } else if (id == R.id.rate){
+            Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
+            Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+            goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            try {
+                startActivity(goToMarket);
+            } catch (ActivityNotFoundException e) {
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName())));
+            }
+
+        }else if (id == R.id.personal_area){
 
         }
 
@@ -255,5 +284,44 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    private void signIn() {
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                        .setPermissions(Arrays.asList(Scopes.PROFILE, Scopes.EMAIL)).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
+
+        Intent intent = AuthUI.getInstance().createSignInIntentBuilder()
+                .setLogo(R.mipmap.logo_big)
+                .setAvailableProviders(providers)
+                .build();
+        startActivityForResult(intent, RC_SIGN_IN);
+    }
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse idpResponse = IdpResponse.fromResultIntent(intent);
+            if (requestCode == RESULT_OK) {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                User user = new User(currentUser);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+                reference.setValue(user);
+            } else {
+                Toast.makeText(this, "Connection Failed, pls try again later", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 }
+
+// TODO: 1.favorites
+// 2. vets around me with google map
+// 3. share feature
+// 6. notifications
+// 5. remove sign in in manu after user is signed in
+// 6. check e mail sending?!
+// 7. personal area
+//A. user details
+// B. user picture

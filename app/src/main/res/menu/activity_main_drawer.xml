@@ -9,7 +9,13 @@
         <item
             android:id="@+id/pet_shop"
             android:icon="@drawable/tip"
-            android:title="Pet Shop" />
+            android:title="Shop for you Pet" />
+
+        <item
+            android:id="@+id/vets"
+            android:icon="@drawable/tip"
+            android:title="Vet's Near Me..." />
+
 
         <item
             android:id="@+id/favorite"
@@ -28,6 +34,12 @@
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/send" />
+
+            <item
+                android:id="@+id/personal_area"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/personal_area" />
+
 
             <item
                 android:id="@+id/rate"
