@@ -26,10 +26,12 @@ public class FindAVetActivity extends FragmentActivity {
         setContentView(R.layout.activity_find_avet);
         ButterKnife.bind(this);
 
-        MapFragment myLocation = new MapFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameMap, myLocation).commit();
+        MapFragment mapFragment = new MapFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameMap, mapFragment).commit();
 
     }
+
+
 
 
 }
