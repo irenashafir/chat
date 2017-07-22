@@ -18,10 +18,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import static android.app.Activity.RESULT_OK;
+
 
 /**
  * Created by irena on 17/07/2017.
@@ -29,73 +29,18 @@ import static android.app.Activity.RESULT_OK;
 
 public class MapFragment extends SupportMapFragment implements OnMapReadyCallback {
     private static final int RC_CODE = 123;
-    private static final LatLngBounds MY_BOUNDS = new LatLngBounds(new LatLng(32.111, 33.222), new LatLng(33.222, 34.222));
     private GoogleMap mMap;
-    private int PLACE_PICKER_REQUEST = 1;
-
+    int PLACE_PICKER_REQUEST = 1;
 
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getMapAsync(this);
-
+        placePicker();
     }
 
-    private void myMapSettings() {
-        if (!checkMyLocationPermissions()) return;
-        //noinspection MissingPermission
-        mMap.setMyLocationEnabled(true);
-        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                LatLng latLng = myLocation();
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 1));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 1));
-                mMap.getUiSettings().setZoomControlsEnabled(true);
-                mMap.getUiSettings().setZoomGesturesEnabled(true);
-                mMap.getUiSettings().setScrollGesturesEnabled(true);
-                mMap.getUiSettings().setCompassEnabled(true);
-                mMap.getUiSettings().setMapToolbarEnabled(true);
-                mMap.addMarker(new MarkerOptions().position(latLng));
-
-                return false;
-            }
-        });
-    }
-
-    @NonNull
-    private LatLng myLocation() {
-        Location myLocation = mMap.getMyLocation();
-        return new LatLng((myLocation.getLatitude()), myLocation.getLongitude());
-    }
-
-    private boolean checkMyLocationPermissions(){
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
-                (getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            String [] permissions =  new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION};
-
-            ActivityCompat.requestPermissions(getActivity(), permissions,RC_CODE );
-
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            myMapSettings();
-        }
-    }
-
-
-    private void addPlacePicker(){
+    private void placePicker() {
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        builder.setLatLngBounds(MY_BOUNDS);
         try {
             startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
         } catch (GooglePlayServicesRepairableException e) {
@@ -115,12 +60,63 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
         }
     }
 
+    private void myMapSettings() {
+        if (!checkMyLocationPermissions()) return;
+        //noinspection MissingPermission
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                LatLng latLng = myLocation();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 1));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 1));
+                mMap.getUiSettings().setZoomControlsEnabled(true);
+                mMap.getUiSettings().setMapToolbarEnabled(true);
+                mMap.getUiSettings().setZoomGesturesEnabled(true);
+                mMap.getUiSettings().setScrollGesturesEnabled(true);
+                mMap.getUiSettings().setCompassEnabled(true);
+                mMap.getUiSettings().setMapToolbarEnabled(true);
+                mMap.addMarker(new MarkerOptions().position(latLng));
+
+                return false;
+            }
+        });
+    }
+
+
+    @NonNull
+    private LatLng myLocation() {
+        Location myLocation = mMap.getMyLocation();
+        return new LatLng((myLocation.getLatitude()), myLocation.getLongitude());
+    }
+
+    private boolean checkMyLocationPermissions(){
+        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                (getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            String [] permissions =  new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(getActivity(), permissions,RC_CODE );
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            myMapSettings();
+        }
+    }
+
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         myMapSettings();
-        addPlacePicker();
     }
+
 
 }
