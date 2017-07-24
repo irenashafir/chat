@@ -63,6 +63,9 @@ public class MainActivity extends AppCompatActivity
     private FirebaseDatabase mDatabase;
     private FirebaseUser user;
     private static final int RC_SIGN_IN = 1;
+    private boolean wantToSignIn = false;
+    private static final String ARG_URL = "url";
+
 
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -77,9 +80,7 @@ public class MainActivity extends AppCompatActivity
                                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                 User user = new User(currentUser);
                                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                                reference.setValue(user);
-
-                                Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
+                                reference.push().setValue(user);
                             }
                             else
                                 Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
@@ -104,9 +105,12 @@ public class MainActivity extends AppCompatActivity
         mDatabase = FirebaseDatabase.getInstance();
         mDatabase.setPersistenceEnabled(true);
 
-
         getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new MainFragment()).commit();
 
+        wantToSignIn = getIntent().getBooleanExtra("wantToSignIn", false);
+        if (this.wantToSignIn == true){
+            signIn();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -286,7 +290,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void signIn() {
+    public void signIn() {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
                         .setPermissions(Arrays.asList(Scopes.PROFILE, Scopes.EMAIL)).build(),
@@ -308,9 +312,18 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 User user = new User(currentUser);
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                reference.setValue(user);
+                reference.push().setValue(user);
+
+                String article = getIntent().getStringExtra("article");
+                Intent webIntent = new Intent(this, petWebViewFragment.class);
+                webIntent.putExtra(ARG_URL, article);
+                if (webIntent.resolveActivity(getPackageManager()) != null){
+                    startActivity(webIntent);
+                }
             } else {
                 Toast.makeText(this, "Connection Failed, pls try again later", Toast.LENGTH_SHORT).show();
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+
             }
         }
     }
@@ -319,7 +332,7 @@ public class MainActivity extends AppCompatActivity
 }
 
 // TODO: 1.favorites
-// 2. vets around me with google map
+// 2. vets around me with google map -- not finished
 // 3. share feature
 // 6. notifications
 // 5. remove sign in in manu after user is signed in

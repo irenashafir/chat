@@ -8,12 +8,12 @@
             android:title="@string/home" />
         <item
             android:id="@+id/pet_shop"
-            android:icon="@drawable/tip"
+            android:icon="@drawable/ic_shopping"
             android:title="Shop for you Pet" />
 
         <item
             android:id="@+id/vets"
-            android:icon="@drawable/tip"
+            android:icon="@drawable/ic_location"
             android:title="Vet's Near Me..." />
 
 
@@ -37,7 +37,7 @@
 
             <item
                 android:id="@+id/personal_area"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_personal"
                 android:title="@string/personal_area" />
 
 

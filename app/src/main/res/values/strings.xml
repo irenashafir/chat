@@ -35,4 +35,6 @@
     <string name="puppy_101">Puppy 101</string>
     <string name="personal_area">Personal Area</string>
     <string name="title_activity_find_avet">Map</string>
+    <string name="user_email">user email</string>
+    <string name="user_name">user name</string>
 </resources>

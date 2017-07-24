@@ -4,18 +4,20 @@ package shafir.irena.vetstreet.models;
  * Created by irena on 13/07/2017.
  */
 
-public class Favorites {
+public class Favorite {
     private String link;
+
     private String userUID;
     private String userName;
+
     private String title;
     private String description;
     private String image;
 
 
-    public Favorites() {
+    public Favorite() {
     }
-    public Favorites(String link, String userUID, String userName, String title, String description, String image) {
+    public Favorite(String link, String userUID, String userName, String title, String description, String image) {
         this.link = link;
         this.userUID = userUID;
         this.userName = userName;
@@ -26,7 +28,7 @@ public class Favorites {
 
     @Override
     public String toString() {
-        return "Favorites{" +
+        return "Favorite{" +
                 "link='" + link + '\'' +
                 ", userUID='" + userUID + '\'' +
                 ", userName='" + userName + '\'' +

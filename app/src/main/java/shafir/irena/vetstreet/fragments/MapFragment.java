@@ -1,6 +1,5 @@
 package shafir.irena.vetstreet.fragments;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -9,18 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -30,35 +23,15 @@ import static android.app.Activity.RESULT_OK;
 public class MapFragment extends SupportMapFragment implements OnMapReadyCallback {
     private static final int RC_CODE = 123;
     private GoogleMap mMap;
-    int PLACE_PICKER_REQUEST = 1;
 
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        placePicker();
+        getMapAsync(this);
+        view.setClickable(true);
     }
 
-    private void placePicker() {
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        try {
-            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST){
-            if (resultCode == RESULT_OK){
-                Place place = PlacePicker.getPlace(getContext(), data);
-            }
-        }
-    }
 
     private void myMapSettings() {
         if (!checkMyLocationPermissions()) return;
@@ -117,6 +90,16 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         myMapSettings();
     }
+
+
+    public void vetSearch(){
+        String myStringLocaion = myLocation().toString();
+        String search = "https://www.google.co.il/maps/search/" +
+                "%D7%95%D7%98%D7%A8%D7%99%D7%A0%D7%A8%D7%99%D7%9D%E2%80%AD/@" +
+                myStringLocaion +
+                ",15z/data=!3m1!4b1";
+    }
+
 
 
 }
