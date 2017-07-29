@@ -37,7 +37,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import shafir.irena.vetstreet.fragments.PetBlogFragment;
+import shafir.irena.vetstreet.fragments.PetChatFragment;
 import shafir.irena.vetstreet.fragments.petWebViewFragment;
 import shafir.irena.vetstreet.models.User;
 
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.pet_Chat:
-                getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new PetBlogFragment())
+                getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new PetChatFragment())
                         .addToBackStack("main").commit();
                     break;
 
@@ -358,8 +358,8 @@ public class MainActivity extends AppCompatActivity
 // TODO: 1.favorites
 // 2. vets around me with google map -- not finished
 // 3. share feature
-// 6. notifications
-// 5. remove sign in in manu after mUser is signed in
+// 4. notifications
+//5. finish onClick in petChatFragment
 // 6. check e mail sending?!
 // 7. personal area
 //A. mUser details

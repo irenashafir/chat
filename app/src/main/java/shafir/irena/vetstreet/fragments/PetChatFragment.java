@@ -39,7 +39,7 @@ import static shafir.irena.vetstreet.fragments.petWebViewFragment.ARG_URL;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PetBlogFragment extends Fragment {
+public class PetChatFragment extends Fragment {
 
 
 
@@ -54,7 +54,7 @@ public class PetBlogFragment extends Fragment {
 
 
 
-    public PetBlogFragment() {
+    public PetChatFragment() {
         // Required empty public constructor
     }
 
@@ -121,7 +121,6 @@ public class PetBlogFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 mDatabase.getReference(ARG_CHAT).orderByChild("date");
-                Toast.makeText(getContext(), "Message Added", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -165,7 +164,7 @@ public class PetBlogFragment extends Fragment {
 
             }
 
-            public static class ChatViewHolder extends RecyclerView.ViewHolder {
+            public static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
                 TextView tvName;
                 TextView tvText;
                 TextView tvTime;
@@ -177,10 +176,18 @@ public class PetBlogFragment extends Fragment {
                     tvText = (TextView) itemView.findViewById(R.id.tvText);
                     tvTime = (TextView) itemView.findViewById(R.id.tvTime);
 
-//                    Random r = new Random();
-//                    tvTime.setTextColor(Color.rgb(r.nextInt(0)-256,r.nextInt(0)-256,r.nextInt(0)-256));
-//                    tvText.setTextColor(Color.rgb(r.nextInt(0)-256,r.nextInt(0)-256,r.nextInt(0)-256));
-//                    tvName.setTextColor(Color.rgb(r.nextInt(0)-256,r.nextInt(0)-256,r.nextInt(0)-256));
+                    itemView.setOnClickListener(this);
+                }
+
+                @Override
+                public void onClick(View v) {
+
+                    // set option of:
+                    //1. share
+                    //2. delete- if by the user
+                    //3. edit- if message by the user clicked
+                    //4.
+
                 }
             }
 
