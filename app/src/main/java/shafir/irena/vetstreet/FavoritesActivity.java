@@ -40,9 +40,14 @@ public class FavoritesActivity extends AppCompatActivity {
         String email = currentUser.getEmail();
         Uri photoUrl = currentUser.getPhotoUrl();
 
-        ivImage.setImageURI(photoUrl);
+
         tvUserName.setText(displayName);
         tvUserEmail.setText(email);
+        ivImage.setImageURI(photoUrl);
+
+        if (photoUrl == null){
+            ivImage.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
+        }
 
     }
 

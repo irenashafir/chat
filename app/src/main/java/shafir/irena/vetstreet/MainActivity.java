@@ -37,6 +37,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import shafir.irena.vetstreet.fragments.PetBlogFragment;
 import shafir.irena.vetstreet.fragments.petWebViewFragment;
 import shafir.irena.vetstreet.models.User;
 
@@ -61,26 +62,27 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
-    private FirebaseUser user;
+    private FirebaseUser mUser;
     private static final int RC_SIGN_IN = 1;
     private boolean wantToSignIn = false;
     private static final String ARG_URL = "url";
+    private static final String USERS_DB = "users";
 
 
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user == null) {
+                mUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (mUser == null) {
                     mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()){
                                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                 User user = new User(currentUser);
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                                reference.push().setValue(user);
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(USERS_DB);
+                                reference.setValue(user);
                             }
                             else
                                 Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
@@ -159,8 +161,8 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.action_settings:
                 startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
-
                   return true;
+
             case R.id.about:
                 petWebViewFragment petWebViewFragment =  new petWebViewFragment();
                 shafir.irena.vetstreet.fragments.petWebViewFragment shoppingFragment =
@@ -173,9 +175,7 @@ public class MainActivity extends AppCompatActivity
                 View view = View.inflate(this, R.layout.contact_us, null);
                 final AlertDialog.Builder contactBuilder = new AlertDialog.Builder(this);
                 contactBuilder.setView(view);
-
                 final EditText etText = (EditText) view.findViewById(R.id.etText);
-
                 contactBuilder.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -205,27 +205,33 @@ public class MainActivity extends AppCompatActivity
                 });
                 contactBuilder.create();
                 contactBuilder.show();
-
                 return true;
+
             case R.id.sign_out:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Are You Sure You Want to Sign Out?");
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                    dialog.dismiss();
                     }
                 });
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mAuth.getInstance().signOut();
+                        Toast.makeText(MainActivity.this, "Signed Out", Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.show();
                 return true;
+
             case R.id.sign_in:
+                if (mUser == null || mUser.isAnonymous()) {
                     signIn();
+                }
+                else
+                    Toast.makeText(this, "You Are Already Signed In", Toast.LENGTH_SHORT).show();
                 return true;
         }
 
@@ -238,50 +244,64 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.home) {
-            Intent intent = new Intent(this, MainActivity.class);
-            if (intent.resolveActivity(getPackageManager()) != null){
-                startActivity(intent);
+        switch (id) {
+            case R.id.home: {
+                Intent intent = new Intent(this, MainActivity.class);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+
+                break;
             }
-
-        } else if (id == R.id.pet_shop) {
-            Intent intent = new Intent(this, ShopActivity.class);
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
+            case R.id.pet_shop: {
+                Intent intent = new Intent(this, ShopActivity.class);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+                break;
             }
-        } else if (id == R.id.favorite) {
-
-
-        } else if (id == R.id.vets){
-            Intent vetIntent = new Intent(this, FindAVetActivity.class);
-            if (vetIntent.resolveActivity(getPackageManager()) != null){
-                startActivity(vetIntent);
+            case R.id.personal_area: {
+                Intent intent = new Intent(this, FavoritesActivity.class);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+                break;
             }
+            case R.id.vets:
+                Intent vetIntent = new Intent(this, FindAVetActivity.class);
+                if (vetIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(vetIntent);
+                }
+                break;
+
+            case R.id.pet_Chat:
+                getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new PetBlogFragment())
+                        .addToBackStack("main").commit();
+                    break;
+
+            case R.id.nav_share:
 
 
-        } else if (id == R.id.nav_share) {
+                break;
+            case R.id.nav_send:
 
+                // send app
+                // send article
 
-        } else if (id == R.id.nav_send) {
-
-            // send app
-            // send article
-
-        } else if (id == R.id.rate){
-            Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
-            Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-            goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
-                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-            try {
-                startActivity(goToMarket);
-            } catch (ActivityNotFoundException e) {
-                startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName())));
-            }
-
-        }else if (id == R.id.personal_area){
-
+                break;
+            case R.id.rate:
+                Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
+                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                try {
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName())));
+                }
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -303,30 +323,34 @@ public class MainActivity extends AppCompatActivity
                 .build();
         startActivityForResult(intent, RC_SIGN_IN);
     }
+
     @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            IdpResponse idpResponse = IdpResponse.fromResultIntent(intent);
-            if (requestCode == RESULT_OK) {
+            IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 User user = new User(currentUser);
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                reference.push().setValue(user);
+                reference.setValue(user);
 
-                String article = getIntent().getStringExtra("article");
-                Intent webIntent = new Intent(this, petWebViewFragment.class);
-                webIntent.putExtra(ARG_URL, article);
-                if (webIntent.resolveActivity(getPackageManager()) != null){
-                    startActivity(webIntent);
-                }
-            } else {
+//                String article = getIntent().getStringExtra("article");
+//                Intent webIntent = new Intent(this, petWebViewFragment.class);
+//                webIntent.putExtra(ARG_URL, article);
+//                if (webIntent.resolveActivity(getPackageManager()) != null){
+//                    startActivity(webIntent);
+//                }
+            } else if (idpResponse == null){
                 Toast.makeText(this, "Connection Failed, pls try again later", Toast.LENGTH_SHORT).show();
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
             }
         }
+
     }
+
+
 
 
 }
@@ -335,8 +359,8 @@ public class MainActivity extends AppCompatActivity
 // 2. vets around me with google map -- not finished
 // 3. share feature
 // 6. notifications
-// 5. remove sign in in manu after user is signed in
+// 5. remove sign in in manu after mUser is signed in
 // 6. check e mail sending?!
 // 7. personal area
-//A. user details
-// B. user picture
+//A. mUser details
+// B. mUser picture

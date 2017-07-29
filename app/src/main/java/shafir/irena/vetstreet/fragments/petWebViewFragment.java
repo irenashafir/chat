@@ -32,7 +32,7 @@ import shafir.irena.vetstreet.models.Favorite;
  */
 public class petWebViewFragment extends Fragment implements View.OnClickListener {
 
-    private static final String ARG_URL = "url";
+    public static final String ARG_URL = "url";
     private static final String ARG_TITLE = "title";
     private static final String ARG_DESCRIPTION = "description";
     private static final String ARG_IMAGE = "image";
@@ -41,7 +41,7 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
     private FloatingActionButton fbLike;
 
     FirebaseDatabase mDatabase;
-    FirebaseUser currentUser;
+    FirebaseUser user;
 
     public petWebViewFragment() {
         // Required empty public constructor
@@ -53,6 +53,14 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
         args.putString(ARG_TITLE, title);
         args.putString(ARG_DESCRIPTION, description);
         args.getString(ARG_IMAGE, image);
+        petWebViewFragment fragment = new petWebViewFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static petWebViewFragment newInstance(String url) {
+        Bundle args = new Bundle();
+        args.putString(ARG_URL, url);
         petWebViewFragment fragment = new petWebViewFragment();
         fragment.setArguments(args);
         return fragment;
@@ -70,7 +78,7 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
 
 
         mDatabase = FirebaseDatabase.getInstance();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         final String url = getArguments().getString(ARG_URL);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -97,7 +105,7 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         final String url = getArguments().getString(ARG_URL);
 
-        if (currentUser.isAnonymous()){
+        if (user.isAnonymous()){
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Register").setMessage("In order to add to favorites, you'll need to signed up")
                     .setMessage("would you like to do that now?");
@@ -120,18 +128,17 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
             });
             builder.show();
         }
-        else if (!currentUser.isAnonymous()) {
+        else if (!user.isAnonymous() || user != null) {
             fbLike.hide();
             Toast.makeText(getContext(), "Article has been added to Favorite", Toast.LENGTH_SHORT).show();
 
             String title = getArguments().getString(ARG_TITLE);
             String description = getArguments().getString(ARG_DESCRIPTION);
             String image = getArguments().getString(ARG_IMAGE);
-            Favorite favorite = new Favorite(url,currentUser.getUid(), currentUser.getDisplayName(), title, description, image);
+            Favorite favorite = new Favorite(url, user.getUid(), user.getDisplayName(), title, description, image);
 
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("favorites").child(currentUser.getUid());
-            DatabaseReference push = ref.push();
-            push.setValue(favorite);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("favorites").child(user.getUid());
+            ref.push().setValue(favorite);
 
         }
     }

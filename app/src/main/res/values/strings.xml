@@ -37,4 +37,10 @@
     <string name="title_activity_find_avet">Map</string>
     <string name="user_email">user email</string>
     <string name="user_name">user name</string>
+    <string name="favorites">favorites</string>
+    <string name="pet_blog">Pet Blog</string>
+    <string name="vet_s_near_me">Vet\'s Near Me...</string>
+    <string name="shop_for_you_pet">Shop for you Pet</string>
+    <string name="rate_us_">Rate Us</string>
+    <string name="favorites_">Favorites</string>
 </resources>

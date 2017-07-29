@@ -9,18 +9,24 @@
         <item
             android:id="@+id/pet_shop"
             android:icon="@drawable/ic_shopping"
-            android:title="Shop for you Pet" />
+            android:title="@string/shop_for_you_pet" />
 
         <item
             android:id="@+id/vets"
             android:icon="@drawable/ic_location"
-            android:title="Vet's Near Me..." />
+            android:title="@string/vet_s_near_me" />
 
 
         <item
-            android:id="@+id/favorite"
+            android:id="@+id/personal_area"
             android:icon="@drawable/favorite"
-            android:title="@string/favorite" />
+            android:title="@string/favorites_" />
+
+        <item
+            android:id="@+id/pet_Chat"
+            android:icon="@drawable/training"
+            android:title="Pet Chat" />
+
 
     </group>
 
@@ -36,15 +42,9 @@
                 android:title="@string/send" />
 
             <item
-                android:id="@+id/personal_area"
-                android:icon="@drawable/ic_personal"
-                android:title="@string/personal_area" />
-
-
-            <item
                 android:id="@+id/rate"
                 android:icon="@drawable/favorite"
-                android:title="Rate Us" />
+                android:title="@string/rate_us_" />
 
 
         </menu>
