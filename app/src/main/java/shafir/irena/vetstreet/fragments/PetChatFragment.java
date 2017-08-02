@@ -2,12 +2,9 @@ package shafir.irena.vetstreet.fragments;
 
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,12 +26,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import shafir.irena.vetstreet.MainActivity;
 import shafir.irena.vetstreet.R;
 import shafir.irena.vetstreet.models.ChatItem;
 
 import static shafir.irena.vetstreet.fragments.NewChatFragment.ARG_CHAT;
-import static shafir.irena.vetstreet.fragments.petWebViewFragment.ARG_URL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,34 +77,8 @@ public class PetChatFragment extends Fragment {
 
     @OnClick(R.id.fabAdd)
     public void onFabClicked() {
-        final String url = getArguments().getString(ARG_URL);
-        if (user.isAnonymous()){
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Register").setMessage("In order to add to favorites, you'll need to signed up")
-                    .setMessage("would you like to do that now?");
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(getContext(), MainActivity.class);
-                    intent.putExtra("wantToSignIn", true);
-                    intent.putExtra("article", url);
-                    if (intent.resolveActivity(getActivity().getPackageManager()) != null){
-                        startActivity(intent);
-                    }
-                }
-            });
-            builder.show();
-        }
-        else if (!user.isAnonymous() || user != null) {
             NewChatFragment newChatFragment = new NewChatFragment();
             newChatFragment.show(getChildFragmentManager(), "chat");
-        }
     }
 
 

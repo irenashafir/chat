@@ -63,10 +63,11 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private FirebaseUser mUser;
-    private static final int RC_SIGN_IN = 1;
+    public static final int RC_SIGN_IN = 1;
     private boolean wantToSignIn = false;
     private static final String ARG_URL = "url";
     private static final String USERS_DB = "users";
+    String contactText = null;
 
 
 
@@ -103,16 +104,20 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
-        mDatabase.setPersistenceEnabled(true);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new MainFragment()).commit();
-
         wantToSignIn = getIntent().getBooleanExtra("wantToSignIn", false);
+
+        mDatabase = FirebaseDatabase.getInstance();
+     //   mDatabase.setPersistenceEnabled(true);
+
+        mAuth = FirebaseAuth.getInstance();
+        mUser= FirebaseAuth.getInstance().getCurrentUser();
+
+
         if (this.wantToSignIn == true){
             signIn();
         }
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new MainFragment()).commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.about:
                 petWebViewFragment petWebViewFragment =  new petWebViewFragment();
-                shafir.irena.vetstreet.fragments.petWebViewFragment shoppingFragment =
+                petWebViewFragment shoppingFragment =
                         petWebViewFragment.newInstance("http://www.vetstreet.com/about");
                 getSupportFragmentManager().beginTransaction().replace
                         (R.id.mainFrame, shoppingFragment ).addToBackStack("main").commit();
@@ -179,20 +184,20 @@ public class MainActivity extends AppCompatActivity
                 contactBuilder.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final String text = etText.getText().toString();
+                        contactText = etText.getText().toString();
 
-                        if (text != null) {
+                        if (contactText != null) {
                             Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
                             sendIntent.setType("message/rfc822");
                             sendIntent.setData(Uri.parse("mailto:"));
                             sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"irena_shafir@walla.co.il"});
                             sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Contact Us");
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, contactText);
 
                             startActivity(Intent.createChooser(sendIntent, "Send Email"));
                             Toast.makeText(MainActivity.this, "Sent", Toast.LENGTH_SHORT).show();
 
-                        } else if (text == null) {
+                        } else if (contactText == null) {
                             Toast.makeText(MainActivity.this, "No Message", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -219,7 +224,7 @@ public class MainActivity extends AppCompatActivity
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mAuth.getInstance().signOut();
+                        FirebaseAuth.getInstance().signOut();
                         Toast.makeText(MainActivity.this, "Signed Out", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -228,7 +233,8 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.sign_in:
                 if (mUser == null || mUser.isAnonymous()) {
-                    signIn();
+                   signIn();
+
                 }
                 else
                     Toast.makeText(this, "You Are Already Signed In", Toast.LENGTH_SHORT).show();
@@ -329,31 +335,30 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 User user = new User(currentUser);
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
                 reference.setValue(user);
 
-//                String article = getIntent().getStringExtra("article");
-//                Intent webIntent = new Intent(this, petWebViewFragment.class);
-//                webIntent.putExtra(ARG_URL, article);
-//                if (webIntent.resolveActivity(getPackageManager()) != null){
-//                    startActivity(webIntent);
-//                }
-            } else if (idpResponse == null){
-                Toast.makeText(this, "Connection Failed, pls try again later", Toast.LENGTH_SHORT).show();
-
+                String url = getIntent().getStringExtra(ARG_URL);
+                if (url != null){
+                    getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, petWebViewFragment.newInstance(url))
+                            .addToBackStack("main").commit();
+                }
+                } else if (idpResponse == null) {
+                    Toast.makeText(this, "Connection Failed, pls try again later", Toast.LENGTH_SHORT).show();
+                }
             }
         }
+
+
+
+
 
     }
 
 
-
-
-}
 
 // TODO: 1.favorites
 // 2. vets around me with google map -- not finished

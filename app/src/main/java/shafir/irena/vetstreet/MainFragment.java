@@ -257,7 +257,6 @@ public class MainFragment extends Fragment {
 
     }
 
-
     @OnClick({R.id.cvPuppy, R.id.cvKitten})
     public void onViewClicked(View view) {
         switch (view.getId()) {

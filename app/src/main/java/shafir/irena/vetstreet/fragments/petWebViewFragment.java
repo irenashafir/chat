@@ -107,20 +107,19 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
 
         if (user.isAnonymous()){
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Register").setMessage("In order to add to favorites, you'll need to signed up")
-                    .setMessage("would you like to do that now?");
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            builder.setTitle("Registration").setMessage("You Must be a Registered User to Use Favorites");
+            builder.setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                 }
             });
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Register Now", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Intent intent = new Intent(getContext(), MainActivity.class);
                     intent.putExtra("wantToSignIn", true);
-                    intent.putExtra("article", url);
+                    intent.putExtra(ARG_URL, url);
                     if (intent.resolveActivity(getActivity().getPackageManager()) != null){
                         startActivity(intent);
                     }
@@ -128,7 +127,7 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
             });
             builder.show();
         }
-        else if (!user.isAnonymous() || user != null) {
+        else if (!user.isAnonymous()) {
             fbLike.hide();
             Toast.makeText(getContext(), "Article has been added to Favorite", Toast.LENGTH_SHORT).show();
 

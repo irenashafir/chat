@@ -131,12 +131,11 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
                     int adapterPosition = getAdapterPosition();
                     PetNewsDataSource.petNews petNews = data.get(adapterPosition);
 
-                    petWebViewFragment petWebViewFragment = shafir.irena.vetstreet.
-                            fragments.petWebViewFragment.newInstance
+                    petWebViewFragment webViewFragment = petWebViewFragment.newInstance
                             (petNews.getLink(), petNews.getTitle(), petNews.getDescription(), petNews.getImage());
 
                     fm.beginTransaction().replace(R.id.mainContainer,
-                            petWebViewFragment).addToBackStack("Full Article").commit();
+                            webViewFragment).addToBackStack("Full Article").commit();
 
                 }
             }

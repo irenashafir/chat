@@ -67,12 +67,23 @@ public class NewChatFragment extends BottomSheetDialogFragment {
 
     @OnClick(R.id.fabNew)
     public void onFabClicked() {
-        if (etText.getText() == null){
+        if (etText.getText() == null) {
             Toast.makeText(getContext(), "Empty", Toast.LENGTH_SHORT).show();
+            onFabClicked();
         }
+
         String time = LocalDateTime.now().toDate().toString();
-        ChatItem chatItem = new ChatItem(user.getDisplayName(), etText.getText().toString(), time);
-        mDatabase.getReference(ARG_CHAT).push().setValue(chatItem);
-        dismiss();
+        if (user.isAnonymous()) {
+            String anonymousUser = "Anonymous";
+            ChatItem chatItem = new ChatItem(anonymousUser, etText.getText().toString(), time);
+            mDatabase.getReference(ARG_CHAT).push().setValue(chatItem);
+            dismiss();
+        } else if (!user.isAnonymous()) {
+            ChatItem chatItem = new ChatItem(user.getDisplayName(), etText.getText().toString(), time);
+            mDatabase.getReference(ARG_CHAT).push().setValue(chatItem);
+            dismiss();
+        }
     }
+
+
 }
