@@ -369,3 +369,4 @@ public class MainActivity extends AppCompatActivity
 // 7. personal area
 //A. mUser details
 // B. mUser picture
+
