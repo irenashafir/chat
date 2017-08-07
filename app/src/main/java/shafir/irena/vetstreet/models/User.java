@@ -1,12 +1,15 @@
 package shafir.irena.vetstreet.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Created by irena on 13/07/2017.
  */
 
-public class User {
+public class User implements Parcelable {
     private String DisplayName;
     private String profileImage;
     private String uid;
@@ -22,6 +25,25 @@ public class User {
         this.email = email;
     }
 
+
+    protected User(Parcel in) {
+        DisplayName = in.readString();
+        profileImage = in.readString();
+        uid = in.readString();
+        email = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     @Override
     public String toString() {
@@ -46,7 +68,9 @@ public class User {
     }
 
     public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+        if (profileImage != null) {
+            this.profileImage = profileImage;
+        }
     }
 
     public String getUid() {
@@ -63,5 +87,18 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(DisplayName);
+        dest.writeString(profileImage);
+        dest.writeString(uid);
+        dest.writeString(email);
     }
 }

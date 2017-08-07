@@ -3,6 +3,8 @@ package shafir.irena.vetstreet.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.joda.time.LocalDateTime;
+
 /**
  * Created by irena on 29/07/2017.
  */
@@ -12,21 +14,16 @@ public class ChatItem implements Parcelable {
     String userName;
     String message;
     String time;
-
+    private String profileImage;
 
     public ChatItem() {
     }
 
-    public ChatItem(String userName, String message, String time) {
-        this.userName = userName;
+    public ChatItem(User user, String message) {
+        this.userName = user.getDisplayName();
         this.message = message;
-        this.time= time;
-    }
-
-    protected ChatItem(Parcel in) {
-        userName = in.readString();
-        message = in.readString();
-        time = in.readString();
+        this.time= LocalDateTime.now().toString();
+        this.profileImage = user.getProfileImage();
     }
 
     public String getTime() {
@@ -37,23 +34,13 @@ public class ChatItem implements Parcelable {
         this.time = time;
     }
 
-    public static final Creator<ChatItem> CREATOR = new Creator<ChatItem>() {
-        @Override
-        public ChatItem createFromParcel(Parcel in) {
-            return new ChatItem(in);
-        }
-
-        @Override
-        public ChatItem[] newArray(int size) {
-            return new ChatItem[size];
-        }
-    };
-
     @Override
     public String toString() {
         return "ChatItem{" +
                 "userName='" + userName + '\'' +
                 ", message='" + message + '\'' +
+                ", time='" + time + '\'' +
+                ", profileImage='" + profileImage + '\'' +
                 '}';
     }
 
@@ -78,10 +65,38 @@ public class ChatItem implements Parcelable {
         return 0;
     }
 
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(userName);
-        dest.writeString(message);
-        dest.writeString(time);
+        dest.writeString(this.userName);
+        dest.writeString(this.message);
+        dest.writeString(this.time);
+        dest.writeString(this.profileImage);
     }
+
+    protected ChatItem(Parcel in) {
+        this.userName = in.readString();
+        this.message = in.readString();
+        this.time = in.readString();
+        this.profileImage = in.readString();
+    }
+
+    public static final Creator<ChatItem> CREATOR = new Creator<ChatItem>() {
+        @Override
+        public ChatItem createFromParcel(Parcel source) {
+            return new ChatItem(source);
+        }
+
+        @Override
+        public ChatItem[] newArray(int size) {
+            return new ChatItem[size];
+        }
+    };
 }

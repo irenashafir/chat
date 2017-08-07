@@ -1,10 +1,13 @@
 package shafir.irena.vetstreet.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by irena on 13/07/2017.
  */
 
-public class Favorite {
+public class Favorite implements Parcelable{
     private String link;
 
     private String userUID;
@@ -15,8 +18,8 @@ public class Favorite {
     private String image;
 
 
-    public Favorite() {
-    }
+    public Favorite() {}
+
     public Favorite(String link, String userUID, String userName, String title, String description, String image) {
         this.link = link;
         this.userUID = userUID;
@@ -25,6 +28,27 @@ public class Favorite {
         this.description = description;
         this.image = image;
     }
+
+    protected Favorite(Parcel in) {
+        link = in.readString();
+        userUID = in.readString();
+        userName = in.readString();
+        title = in.readString();
+        description = in.readString();
+        image = in.readString();
+    }
+
+    public static final Creator<Favorite> CREATOR = new Creator<Favorite>() {
+        @Override
+        public Favorite createFromParcel(Parcel in) {
+            return new Favorite(in);
+        }
+
+        @Override
+        public Favorite[] newArray(int size) {
+            return new Favorite[size];
+        }
+    };
 
     @Override
     public String toString() {
@@ -84,5 +108,20 @@ public class Favorite {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(link);
+        dest.writeString(userUID);
+        dest.writeString(userName);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(image);
     }
 }

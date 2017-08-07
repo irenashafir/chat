@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     public static final int RC_SIGN_IN = 1;
     private boolean wantToSignIn = false;
     private static final String ARG_URL = "url";
-    private static final String USERS_DB = "users";
+    private static final String DB_USERS = "users";
     String contactText = null;
 
 
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity
                             if (task.isSuccessful()){
                                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                 User user = new User(currentUser);
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(USERS_DB);
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(DB_USERS);
                                 reference.setValue(user);
                             }
                             else
@@ -336,23 +337,40 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == RC_SIGN_IN) {
             IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser currentUser = mAuth.getCurrentUser();
                 User user = new User(currentUser);
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                reference.setValue(user);
+                DatabaseReference ref = mDatabase.getReference(DB_USERS);
+                ref.setValue(user);
 
                 String url = getIntent().getStringExtra(ARG_URL);
-                if (url != null){
+                if (url != null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, petWebViewFragment.newInstance(url))
                             .addToBackStack("main").commit();
                 }
-                } else if (idpResponse == null) {
-                    Toast.makeText(this, "Connection Failed, pls try again later", Toast.LENGTH_SHORT).show();
+            }
+                if ((idpResponse != null ? idpResponse.getErrorCode() : 0) == ErrorCodes.NO_NETWORK){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("No Internet Connection").setMessage("Would you like to Reconnect?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Intent.ACTION_MAIN);
+                            intent.setClassName("com.android.phone", "com.android.phone.NetworkSetting");
+                            if (intent.resolveActivity(getPackageManager()) != null) {
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.show();
                 }
             }
         }
-
-
 
 
 
@@ -369,4 +387,5 @@ public class MainActivity extends AppCompatActivity
 // 7. personal area
 //A. mUser details
 // B. mUser picture
+// C. saved articles
 

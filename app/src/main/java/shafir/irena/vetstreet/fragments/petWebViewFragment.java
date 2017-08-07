@@ -19,8 +19,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import shafir.irena.vetstreet.MainActivity;
 import shafir.irena.vetstreet.R;
@@ -36,6 +39,8 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
     private static final String ARG_TITLE = "title";
     private static final String ARG_DESCRIPTION = "description";
     private static final String ARG_IMAGE = "image";
+    public static final String DB_FAVORITES = "favorites";
+    private boolean isInFavorites = false;
 
     private WebView webView;
     private FloatingActionButton fbLike;
@@ -97,9 +102,11 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
             }
         });
         webView.loadUrl(url);
+
+        checkFavoritesInDB();
+
         return v;
     }
-
 
     @Override
     public void onClick(View v) {
@@ -128,17 +135,40 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
             builder.show();
         }
         else if (!user.isAnonymous()) {
-            fbLike.hide();
-            Toast.makeText(getContext(), "Article has been added to Favorite", Toast.LENGTH_SHORT).show();
+            if (!checkFavoritesInDB()) {
+                Toast.makeText(getContext(), "Article has been added to Favorite", Toast.LENGTH_SHORT).show();
 
-            String title = getArguments().getString(ARG_TITLE);
-            String description = getArguments().getString(ARG_DESCRIPTION);
-            String image = getArguments().getString(ARG_IMAGE);
-            Favorite favorite = new Favorite(url, user.getUid(), user.getDisplayName(), title, description, image);
+                final String title = getArguments().getString(ARG_TITLE);
+                String description = getArguments().getString(ARG_DESCRIPTION);
+                String image = getArguments().getString(ARG_IMAGE);
+                Favorite favorite = new Favorite(url, user.getUid(), user.getDisplayName(), title, description, image);
 
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("favorites").child(user.getUid());
-            ref.push().setValue(favorite);
-
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DB_FAVORITES).child(user.getUid());
+                ref.push().setValue(favorite);
+            }
+            else
+                Toast.makeText(getContext(), "Article is already in Favorites", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private boolean checkFavoritesInDB(){
+        mDatabase.getReference(DB_FAVORITES).child(user.getUid()).
+                addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    isInFavorites = true;
+                    fbLike.setImageResource(R.drawable.ic_added);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+        return isInFavorites;
+    }
+
+
 }

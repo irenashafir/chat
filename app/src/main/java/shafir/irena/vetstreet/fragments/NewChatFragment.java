@@ -15,14 +15,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.joda.time.LocalDateTime;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import shafir.irena.vetstreet.R;
 import shafir.irena.vetstreet.models.ChatItem;
+import shafir.irena.vetstreet.models.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,17 +68,21 @@ public class NewChatFragment extends BottomSheetDialogFragment {
     public void onFabClicked() {
         if (etText.getText() == null) {
             Toast.makeText(getContext(), "Empty", Toast.LENGTH_SHORT).show();
-            onFabClicked();
+            return;
         }
 
-        String time = LocalDateTime.now().toDate().toString();
         if (user.isAnonymous()) {
-            String anonymousUser = "Anonymous";
-            ChatItem chatItem = new ChatItem(anonymousUser, etText.getText().toString(), time);
+
+            User anonymousUser = new User("Anonymous",
+                    String.valueOf(R.drawable.com_facebook_profile_picture_blank_portrait),
+                    user.getUid(),
+                    null);
+
+            ChatItem chatItem = new ChatItem(anonymousUser, etText.getText().toString());
             mDatabase.getReference(ARG_CHAT).push().setValue(chatItem);
             dismiss();
         } else if (!user.isAnonymous()) {
-            ChatItem chatItem = new ChatItem(user.getDisplayName(), etText.getText().toString(), time);
+            ChatItem chatItem = new ChatItem(new User(user),etText.getText().toString());
             mDatabase.getReference(ARG_CHAT).push().setValue(chatItem);
             dismiss();
         }

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -130,20 +132,21 @@ public class PetChatFragment extends Fragment {
                 viewHolder.tvName.setText(model.getUserName());
                 viewHolder.tvText.setText(model.getMessage());
                 viewHolder.tvTime.setText(model.getTime());
-
+                Glide.with(activity).load(model.getProfileImage()).into(viewHolder.ivProfile);
             }
 
             public static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
                 TextView tvName;
                 TextView tvText;
                 TextView tvTime;
-
+                CircularImageView ivProfile;
 
                 public ChatViewHolder(View itemView) {
                     super(itemView);
                     tvName = (TextView) itemView.findViewById(R.id.tvName);
                     tvText = (TextView) itemView.findViewById(R.id.tvText);
                     tvTime = (TextView) itemView.findViewById(R.id.tvTime);
+                    ivProfile = (CircularImageView) itemView.findViewById(R.id.ivProfile);
 
                     itemView.setOnClickListener(this);
                 }
