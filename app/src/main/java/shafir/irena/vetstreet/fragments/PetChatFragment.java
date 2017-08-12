@@ -48,6 +48,7 @@ public class PetChatFragment extends Fragment {
 
     FirebaseDatabase mDatabase;
     FirebaseUser user;
+    FirebaseAuth mAuth;
 
 
 
@@ -65,7 +66,8 @@ public class PetChatFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+
         setUpRecycler();
 
         return view;
@@ -85,7 +87,7 @@ public class PetChatFragment extends Fragment {
 
 
     private void setUpRecycler() {
-        ChatAdapter adapter = new ChatAdapter(getActivity(),mDatabase.getReference(ARG_CHAT).orderByChild("date"));
+        ChatAdapter adapter = new ChatAdapter(getActivity(),mDatabase.getReference(ARG_CHAT).orderByChild("date"), user, mAuth);
         rvChat.setAdapter(adapter);
         rvChat.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabase.getReference(ARG_CHAT).addChildEventListener(new ChildEventListener() {
@@ -121,10 +123,14 @@ public class PetChatFragment extends Fragment {
 
         public static class ChatAdapter extends FirebaseRecyclerAdapter<ChatItem, ChatAdapter.ChatViewHolder> {
             Activity activity;
+            FirebaseUser mUser;
+            FirebaseAuth mAuth;
 
-            public ChatAdapter(Activity activity, Query query) {
+            public ChatAdapter(Activity activity, Query query, FirebaseUser user, FirebaseAuth mAuth) {
                 super(ChatItem.class, R.layout.chat_item, ChatViewHolder.class, query);
                 this.activity = activity;
+                this.mUser = user;
+                this.mAuth = mAuth;
             }
 
             @Override
@@ -132,7 +138,13 @@ public class PetChatFragment extends Fragment {
                 viewHolder.tvName.setText(model.getUserName());
                 viewHolder.tvText.setText(model.getMessage());
                 viewHolder.tvTime.setText(model.getTime());
-                Glide.with(activity).load(model.getProfileImage()).into(viewHolder.ivProfile);
+                if (model.getProfileImage() != null) {
+                    Glide.with(activity).load(model.getProfileImage()).into(viewHolder.ivProfile);
+                }
+                else {
+                    Glide.with(activity).load(R.drawable.com_facebook_profile_picture_blank_portrait)
+                            .into(viewHolder.ivProfile);
+                }
             }
 
             public static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -140,6 +152,7 @@ public class PetChatFragment extends Fragment {
                 TextView tvText;
                 TextView tvTime;
                 CircularImageView ivProfile;
+
 
                 public ChatViewHolder(View itemView) {
                     super(itemView);
@@ -153,6 +166,8 @@ public class PetChatFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                  //  AlertDialog builder = new AlertDialog(v.getContext());
+
 
                     // set option of:
                     //1. share

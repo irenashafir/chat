@@ -55,7 +55,6 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
         PetNewsDataSource.getNews(this, urlAddress);
 
         rvLatestNews.setLayoutManager(new LinearLayoutManager(getContext()));
-
         return v;
     }
 
@@ -108,7 +107,7 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
 
 
         class PetNewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView tvTitle;
+            TextView tvTitle;
             TextView tvDescription;
             ImageView ivImage;
 

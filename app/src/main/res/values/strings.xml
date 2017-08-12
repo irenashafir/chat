@@ -43,4 +43,13 @@
     <string name="shop_for_you_pet">Shop for you Pet</string>
     <string name="rate_us_">Rate Us</string>
     <string name="favorites_">Favorites</string>
+    <string name="new_message_here">new message here...</string>
+    <string name="logopic3">logoPic3</string>
+    <string name="logopic2">logoPic2</string>
+    <string name="logopic1">logoPic1</string>
+    <string name="we_care_about_what_you_think">We Care About What You Think</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="write_here">write here....</string>
+    <string name="_10_10_2000">10.10.2000</string>
+    <string name="user_text">user text</string>
 </resources>

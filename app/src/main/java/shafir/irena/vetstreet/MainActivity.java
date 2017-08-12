@@ -267,10 +267,29 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
-            case R.id.personal_area: {
-                Intent intent = new Intent(this, FavoritesActivity.class);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
+            case R.id.favorites: {
+                if (mUser.isAnonymous()){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Favorites").setMessage("Must be a registered user to user favorites");
+                    builder.setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                       dialog.dismiss();
+                        }
+                    });
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            signIn();
+                        }
+                    });
+                    builder.show();
+                }
+                else if (mUser != null && !mUser.isAnonymous()) {
+                    Intent intent = new Intent(this, FavoritesActivity.class);
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                 }
                 break;
             }
@@ -337,9 +356,9 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == RC_SIGN_IN) {
             IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
-                FirebaseUser currentUser = mAuth.getCurrentUser();
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 User user = new User(currentUser);
-                DatabaseReference ref = mDatabase.getReference(DB_USERS);
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DB_USERS);
                 ref.setValue(user);
 
                 String url = getIntent().getStringExtra(ARG_URL);
@@ -384,8 +403,10 @@ public class MainActivity extends AppCompatActivity
 // 4. notifications
 //5. finish onClick in petChatFragment
 // 6. check e mail sending?!
+
 // 7. personal area
-//A. mUser details
-// B. mUser picture
-// C. saved articles
+//A. pics in article dont upload
+// B. mUser picture -- add option to take a new pic
+// C. saved articles - on click}
+
 
