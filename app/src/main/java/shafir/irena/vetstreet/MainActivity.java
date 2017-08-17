@@ -407,6 +407,6 @@ public class MainActivity extends AppCompatActivity
 // 7. personal area
 //A. pics in article dont upload
 // B. mUser picture -- add option to take a new pic
-// C. saved articles - on click}
+// C. saved articles - on click -- on click to webView doesnt work + add bottom sheet fragment for SHARE function
 
 

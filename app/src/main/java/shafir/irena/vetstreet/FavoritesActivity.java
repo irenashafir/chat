@@ -28,8 +28,8 @@ public class FavoritesActivity extends AppCompatActivity {
     TextView tvUserEmail;
     @BindView(R.id.tvHello)
     TextView tvHello;
-    @BindView(R.id.frFavories)
-    FrameLayout frFavories;
+    @BindView(R.id.frFavorites)
+    FrameLayout frFavorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class FavoritesActivity extends AppCompatActivity {
             }
         }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frFavories, new FavoritesFragment())
+        getSupportFragmentManager().beginTransaction().replace(R.id.frFavorites, new FavoritesFragment())
                 .addToBackStack("myFavorites").commit();
     }
 

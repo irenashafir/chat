@@ -78,7 +78,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/dl.jsp";
 
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -87,7 +87,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:dog-news";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -96,7 +96,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=speciesTags:cats";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -106,7 +106,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed" +
                         ".jsp?Categories=siteContentTags:marty-becker-health:marty-becker-on-health";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -125,7 +125,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:symptom-center" +
                         ":health-issues:seasonal-dangers:symptoms:adult-dog-health-conditions,dogBreedTags=health-issues";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -134,7 +134,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:exercise";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -144,7 +144,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=" +
                         "siteContentTags:complementary-and-alternative-medicine:holistic-and-natural-care";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -154,7 +154,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
                         "diets:digestive-care:nutrition-issues,conditionTags:weight-management";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
     }
@@ -173,7 +173,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=dogBreedTags:breed-" +
                         "information,siteContentTags:breed-information:choosing-a-dog:choosing-a-cat";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                       .commit();
             }
         });
 
@@ -183,7 +183,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
                         "training:pet-food-recall:pet-safety";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -193,7 +193,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:training:cat-training:" +
                         "dog-training:crate-training:kitten-training:puppy-training:house-training";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                       .commit();
             }
         });
 
@@ -202,7 +202,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:travel";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
     }
@@ -221,7 +221,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
                         "why-does-my-dog:why-does-my-cat:why-does-my-bird";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                       .commit();
             }
         });
 
@@ -232,7 +232,7 @@ public class MainFragment extends Fragment {
                         "funny-animals:funny-cat-pictures:funny-cat-videos:" +
                         "funny-dog-pictures:funny-dog-videos:funny-stories:funny-animal-videos:humor";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                      .commit();
             }
         });
         btnTips.setOnClickListener(new View.OnClickListener() {
@@ -241,7 +241,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
                         "celebrities-and-pets:celebrity-pets";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -251,7 +251,7 @@ public class MainFragment extends Fragment {
                 String url = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:animal-videos:cat-videos:" +
                         "dog-videos:funny-cat-videos:funny-dog-videos:funny-animal-videos";
                 getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(url))
-                        .addToBackStack("main").commit();
+                        .commit();
             }
         });
 
@@ -268,8 +268,7 @@ public class MainFragment extends Fragment {
             case R.id.cvKitten:
                 String kitten = "http://www.vetstreet.com/rss/news-feed.jsp?Categories=siteContentTags:" +
                         "kitten-training:new-cat-owner-guide:kittens:kitten-training:kitten-health-conditions";
-                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(kitten))
-                        .addToBackStack("main").commit();
+                getFragmentManager().beginTransaction().replace(R.id.mainFrame, PetNewsFragment.newInstance(kitten)).commit();
 
                 break;
         }

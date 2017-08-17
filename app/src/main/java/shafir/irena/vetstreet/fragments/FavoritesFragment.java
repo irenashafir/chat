@@ -3,6 +3,7 @@ package shafir.irena.vetstreet.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -67,7 +69,7 @@ public class FavoritesFragment extends Fragment {
 
     private void setUpAdapter() {
         DatabaseReference dbUserRef = mDatabase.getReference(DB_FAVORITES).child(currentUser.getUid());
-        FavoritesAdapter adapter = new FavoritesAdapter(getActivity(),dbUserRef);
+        FavoritesAdapter adapter = new FavoritesAdapter(getActivity(), this, dbUserRef);
         rvLatestNews.setAdapter(adapter);
         rvLatestNews.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -81,11 +83,13 @@ public class FavoritesFragment extends Fragment {
 
     public class FavoritesAdapter extends FirebaseRecyclerAdapter<Favorite, FavoritesAdapter.FavoritesViewHolder> {
         Activity activity;
+        Fragment fragment;
+        Favorite model;
 
-
-        public FavoritesAdapter(Activity activity, Query query) {
-            super(Favorite.class, R.layout.recycler_template, FavoritesViewHolder.class, query);
+        public FavoritesAdapter(Activity activity, Fragment fragment, Query query) {
+            super(Favorite.class, R.layout.favorite_item, FavoritesViewHolder.class, query);
             this.activity = activity;
+            this.fragment = fragment;
         }
 
         @Override
@@ -96,6 +100,7 @@ public class FavoritesFragment extends Fragment {
 
         @Override
         protected void populateViewHolder(FavoritesViewHolder viewHolder, Favorite model, int position) {
+            this.model= model;
             viewHolder.tvTitle.setText(model.getTitle());
             viewHolder.tvDescription.setText(model.getDescription());
             if (model.getImage() != null) {
@@ -105,17 +110,40 @@ public class FavoritesFragment extends Fragment {
 
         }
 
-        public class FavoritesViewHolder extends RecyclerView.ViewHolder {
+        public class FavoritesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             private TextView tvTitle;
             private TextView tvDescription;
             private ImageView ivImage;
+            private FloatingActionButton fbShare;
+
+
 
             public FavoritesViewHolder(View itemView) {
                 super(itemView);
                 tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
                 tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
                 ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
+                fbShare = (FloatingActionButton) itemView.findViewById(R.id.fbShare);
+
+                tvTitle.setOnClickListener(this);
+                fbShare.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+
+                if (v == fbShare) {
+                    Toast.makeText(activity, "Click", Toast.LENGTH_SHORT).show();
+                } else if (v == tvTitle){
+                    petWebViewFragment pWeb = new petWebViewFragment();
+                    Bundle bundle= new Bundle();
+                    bundle.putParcelable("favorite", model);
+                    pWeb.setArguments(bundle);
+                    pWeb.getFragmentManager().beginTransaction().replace(R.id.mainContainer, pWeb).commit();
+                }
             }
         }
     }
 }
+
+
