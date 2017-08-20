@@ -36,17 +36,19 @@ import shafir.irena.vetstreet.models.Favorite;
 public class petWebViewFragment extends Fragment implements View.OnClickListener {
 
     public static final String ARG_URL = "url";
-    private static final String ARG_TITLE = "title";
+    protected static final String ARG_TITLE = "title";
     private static final String ARG_DESCRIPTION = "description";
     private static final String ARG_IMAGE = "image";
     public static final String DB_FAVORITES = "favorites";
-    private boolean isInFavorites = false;
+    private static final java.lang.String ARG_UID = "favorite UID";
+    private boolean isInFavorites;
 
     private WebView webView;
     private FloatingActionButton fbLike;
 
     FirebaseDatabase mDatabase;
     FirebaseUser user;
+    Favorite tempFav;
 
     public petWebViewFragment() {
         // Required empty public constructor
@@ -86,6 +88,7 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         final String url = getArguments().getString(ARG_URL);
+
         webView.getSettings().setJavaScriptEnabled(true);
 
         webView.setWebViewClient(new WebViewClient() {
@@ -95,6 +98,7 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
                 webView.loadUrl(request.getUrl().toString());
                 return true;
             }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 webView.loadUrl(url);
@@ -104,15 +108,13 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
         webView.loadUrl(url);
 
         checkFavoritesInDB();
-
         return v;
     }
 
     @Override
     public void onClick(View v) {
         final String url = getArguments().getString(ARG_URL);
-
-        if (user.isAnonymous()){
+        if (user.isAnonymous()) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Registration").setMessage("You Must be a Registered User to Use Favorites");
             builder.setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
@@ -127,20 +129,19 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
                     Intent intent = new Intent(getContext(), MainActivity.class);
                     intent.putExtra("wantToSignIn", true);
                     intent.putExtra(ARG_URL, url);
-                    if (intent.resolveActivity(getActivity().getPackageManager()) != null){
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                         startActivity(intent);
                     }
                 }
             });
             builder.show();
-        }
-        else if (!user.isAnonymous()) {
+        } else if (!user.isAnonymous()) {
             if (!checkFavoritesInDB()) {
                 Toast.makeText(getContext(), "Article has been added to Favorite", Toast.LENGTH_SHORT).show();
 
-                final String title = getArguments().getString(ARG_TITLE);
                 String description = getArguments().getString(ARG_DESCRIPTION);
                 String image = getArguments().getString(ARG_IMAGE);
+                final String title = getArguments().getString(ARG_TITLE);
                 Favorite favorite = new Favorite(url, user.getUid(), user.getDisplayName(), title, description, image);
 
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DB_FAVORITES).child(user.getUid());
@@ -151,17 +152,23 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private boolean checkFavoritesInDB(){
-        mDatabase.getReference(DB_FAVORITES).child(user.getUid()).
-                addListenerForSingleValueEvent(new ValueEventListener() {
+    private synchronized boolean checkFavoritesInDB() {
+        DatabaseReference child = mDatabase.getReference(DB_FAVORITES).child(user.getUid());
+        child.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    isInFavorites = true;
-                    fbLike.setImageResource(R.drawable.ic_added);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    String FBTitle = snapshot.child("title").getValue().toString().trim();
+                    String title = getArguments().getString("title");
+
+                    if (FBTitle.equals(title)) {
+                        isInFavorites = true;
+                        fbLike.setImageResource(R.drawable.ic_added);
+                        break;
+                    }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();

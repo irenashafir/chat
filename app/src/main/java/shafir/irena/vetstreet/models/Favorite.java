@@ -16,6 +16,7 @@ public class Favorite implements Parcelable{
     private String title;
     private String description;
     private String image;
+    private String favoriteUID;
 
 
     public Favorite() {}
@@ -59,6 +60,7 @@ public class Favorite implements Parcelable{
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", image='" + image + '\'' +
+                ", favoriteUID='" + favoriteUID + '\'' +
                 '}';
     }
 

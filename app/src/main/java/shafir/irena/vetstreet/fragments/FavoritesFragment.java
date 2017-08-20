@@ -2,17 +2,17 @@ package shafir.irena.vetstreet.fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -25,9 +25,11 @@ import com.google.firebase.database.Query;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import shafir.irena.vetstreet.MainActivity;
 import shafir.irena.vetstreet.R;
 import shafir.irena.vetstreet.models.Favorite;
 
+import static shafir.irena.vetstreet.fragments.petWebViewFragment.ARG_URL;
 import static shafir.irena.vetstreet.fragments.petWebViewFragment.DB_FAVORITES;
 
 /**
@@ -114,7 +116,7 @@ public class FavoritesFragment extends Fragment {
             private TextView tvTitle;
             private TextView tvDescription;
             private ImageView ivImage;
-            private FloatingActionButton fbShare;
+            private ImageButton ibShare;
 
 
 
@@ -123,23 +125,25 @@ public class FavoritesFragment extends Fragment {
                 tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
                 tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
                 ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
-                fbShare = (FloatingActionButton) itemView.findViewById(R.id.fbShare);
+                ibShare = (ImageButton) itemView.findViewById(R.id.ibShare);
 
                 tvTitle.setOnClickListener(this);
-                fbShare.setOnClickListener(this);
+                ibShare.setOnClickListener(this);
             }
 
             @Override
             public void onClick(View v) {
+                if (v == ibShare) {
+                    ShareFavoriteFragment share = ShareFavoriteFragment.newInstance(model.getTitle(), model.getLink());
+                    share.show(fragment.getChildFragmentManager(), DB_FAVORITES);
 
-                if (v == fbShare) {
-                    Toast.makeText(activity, "Click", Toast.LENGTH_SHORT).show();
-                } else if (v == tvTitle){
-                    petWebViewFragment pWeb = new petWebViewFragment();
-                    Bundle bundle= new Bundle();
-                    bundle.putParcelable("favorite", model);
-                    pWeb.setArguments(bundle);
-                    pWeb.getFragmentManager().beginTransaction().replace(R.id.mainContainer, pWeb).commit();
+                } else if (v == tvTitle | v == tvDescription){
+                    Intent viewFavorite = new Intent(getContext(), MainActivity.class);
+                    viewFavorite.putExtra(ARG_URL, model.getLink());
+                    viewFavorite.putExtra("fullArticle", true);
+                    if (viewFavorite.resolveActivity(activity.getPackageManager()) != null){
+                        startActivity(viewFavorite);
+                    }
                 }
             }
         }

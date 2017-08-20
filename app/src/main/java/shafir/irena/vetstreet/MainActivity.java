@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseUser mUser;
     public static final int RC_SIGN_IN = 1;
     private boolean wantToSignIn = false;
+    private boolean cameFromFavorite = false;
     private static final String ARG_URL = "url";
     private static final String DB_USERS = "users";
     String contactText = null;
@@ -106,16 +107,20 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         wantToSignIn = getIntent().getBooleanExtra("wantToSignIn", false);
-
+        cameFromFavorite =getIntent().getBooleanExtra("fullArticle",false);
         mDatabase = FirebaseDatabase.getInstance();
-     //   mDatabase.setPersistenceEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         mUser= FirebaseAuth.getInstance().getCurrentUser();
 
 
-        if (this.wantToSignIn == true){
+        if (this.wantToSignIn){
             signIn();
+        }
+
+        if (this.cameFromFavorite){
+            String url = getIntent().getStringExtra(ARG_URL);
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, petWebViewFragment.newInstance(url)).commit();
         }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new MainFragment()).commit();
@@ -306,13 +311,14 @@ public class MainActivity extends AppCompatActivity
                     break;
 
             case R.id.nav_share:
-
-
-                break;
-            case R.id.nav_send:
-
-                // send app
-                // send article
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setType("text/plain");
+                sendIntent.putExtra("MyApp", "http://play.google.com/store/apps/details?id=" +
+                        getApplicationContext().getPackageName());
+                if (sendIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(Intent.createChooser(sendIntent, "Vet Street"));
+                }
 
                 break;
             case R.id.rate:
@@ -398,15 +404,12 @@ public class MainActivity extends AppCompatActivity
 
 
 // TODO: 1.favorites
-// 2. vets around me with google map -- not finished
-// 3. share feature
-// 4. notifications
-//5. finish onClick in petChatFragment
-// 6. check e mail sending?!
-
-// 7. personal area
-//A. pics in article dont upload
-// B. mUser picture -- add option to take a new pic
-// C. saved articles - on click -- on click to webView doesnt work + add bottom sheet fragment for SHARE function
-
+// 1. vets around me with google map -- not finished
+// 2. notifications
+// 3. finish onClick in petChatFragment
+// 4. check e mail sending?!
+// 5. personal area
+// A. mUser picture -- add option to take a new pic
+// B. get to article from favorite-- "not executable code" -- recheck again later
+// 6. app intro
 

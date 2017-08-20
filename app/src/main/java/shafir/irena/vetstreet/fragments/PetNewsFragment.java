@@ -51,6 +51,7 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
         View v = inflater.inflate(R.layout.fragment_recycler, container, false);
         rvLatestNews = (RecyclerView) v.findViewById(R.id.rvLatestNews);
 
+
         String urlAddress = getArguments().getString(ARG_URL, null);
         PetNewsDataSource.getNews(this, urlAddress);
 
