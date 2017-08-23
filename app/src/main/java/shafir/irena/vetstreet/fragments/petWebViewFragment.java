@@ -79,10 +79,10 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_webview, container, false);
+
         webView = (WebView) v.findViewById(R.id.webView);
         fbLike = (FloatingActionButton) v.findViewById(R.id.fbLike);
         fbLike.setOnClickListener(this);
-
 
         mDatabase = FirebaseDatabase.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();

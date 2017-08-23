@@ -20,8 +20,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import butterknife.BindView;
@@ -30,6 +32,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import shafir.irena.vetstreet.R;
 import shafir.irena.vetstreet.models.ChatItem;
+import shafir.irena.vetstreet.models.User;
 
 import static shafir.irena.vetstreet.fragments.NewChatFragment.ARG_CHAT;
 
@@ -152,10 +155,12 @@ public class PetChatFragment extends Fragment {
                 TextView tvText;
                 TextView tvTime;
                 CircularImageView ivProfile;
+                User user;
+                Fragment fragment;
 
-
-                public ChatViewHolder(View itemView) {
+                public ChatViewHolder(View itemView, Fragment fragment) {
                     super(itemView);
+                    this.fragment = fragment;
                     tvName = (TextView) itemView.findViewById(R.id.tvName);
                     tvText = (TextView) itemView.findViewById(R.id.tvText);
                     tvTime = (TextView) itemView.findViewById(R.id.tvTime);
@@ -166,15 +171,21 @@ public class PetChatFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                  //  AlertDialog builder = new AlertDialog(v.getContext());
+                    DatabaseReference userChat = FirebaseDatabase.getInstance().getReference(ARG_CHAT).child(user.getUid());
+                    userChat.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.getValue() == user.getUid()){
+                                ChatClickFragment editChat = new ChatClickFragment();
+                                editChat.show(fragment.getChildFragmentManager(), "editChat");
+                            }
+                        }
 
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    // set option of:
-                    //1. share
-                    //2. delete- if by the user
-                    //3. edit- if message by the user clicked
-                    //4.
-
+                        }
+                    });
                 }
             }
 

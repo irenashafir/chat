@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity
 
         wantToSignIn = getIntent().getBooleanExtra("wantToSignIn", false);
         cameFromFavorite =getIntent().getBooleanExtra("fullArticle",false);
-        mDatabase = FirebaseDatabase.getInstance();
 
+        mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mUser= FirebaseAuth.getInstance().getCurrentUser();
 
@@ -403,13 +403,13 @@ public class MainActivity extends AppCompatActivity
 
 
 
-// TODO: 1.favorites
+// TODO:
 // 1. vets around me with google map -- not finished
 // 2. notifications
-// 3. finish onClick in petChatFragment
+// 3. finish onClick in petChatFragment --- check on click - emulator made trouble before testing
 // 4. check e mail sending?!
-// 5. personal area
-// A. mUser picture -- add option to take a new pic
-// B. get to article from favorite-- "not executable code" -- recheck again later
+// 5. personal area -- favorites
+//      A. mUser picture -- add option to take a new pic
+//      B. get to article from favorite-- "not executable code" -- recheck again later
 // 6. app intro
 
