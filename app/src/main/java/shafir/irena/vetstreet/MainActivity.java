@@ -65,35 +65,35 @@ public class MainActivity extends AppCompatActivity
     private FirebaseDatabase mDatabase;
     private FirebaseUser mUser;
     public static final int RC_SIGN_IN = 1;
-    private boolean wantToSignIn = false;
-    private boolean cameFromFavorite = false;
     private static final String ARG_URL = "url";
     private static final String DB_USERS = "users";
     String contactText = null;
 
 
-
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (mUser == null) {
-                    mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()){
-                                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                                User user = new User(currentUser);
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(DB_USERS);
-                                reference.setValue(user);
-                            }
-                            else
-                                Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (mUser == null) {
+                mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                            User user = new User(currentUser);
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+                            reference.setValue(user);
+
+                            Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                }
+                        else
+                            Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        };
+        }
+    };
+
 
 
 
@@ -106,19 +106,19 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        wantToSignIn = getIntent().getBooleanExtra("wantToSignIn", false);
-        cameFromFavorite =getIntent().getBooleanExtra("fullArticle",false);
+        boolean wantToSignIn = getIntent().getBooleanExtra("wantToSignIn", false);
+        boolean cameFromFavorite = getIntent().getBooleanExtra("fullArticle", false);
 
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        mUser= FirebaseAuth.getInstance().getCurrentUser();
+        mUser= mAuth.getCurrentUser();
 
 
-        if (this.wantToSignIn){
+        if (wantToSignIn){
             signIn();
         }
 
-        if (this.cameFromFavorite){
+        if (cameFromFavorite){
             String url = getIntent().getStringExtra(ARG_URL);
             getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, petWebViewFragment.newInstance(url)).commit();
         }
@@ -355,7 +355,6 @@ public class MainActivity extends AppCompatActivity
                 .build();
         startActivityForResult(intent, RC_SIGN_IN);
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -364,7 +363,7 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 User user = new User(currentUser);
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DB_USERS);
+                DatabaseReference ref = mDatabase.getReference(DB_USERS);
                 ref.setValue(user);
 
                 String url = getIntent().getStringExtra(ARG_URL);
@@ -397,8 +396,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-
-
     }
 
 
@@ -406,10 +403,10 @@ public class MainActivity extends AppCompatActivity
 // TODO:
 // 1. vets around me with google map -- not finished
 // 2. notifications
-// 3. finish onClick in petChatFragment --- check on click - emulator made trouble before testing
+// 3. finish onClick in petChatFragment --- on click doesnt work
 // 4. check e mail sending?!
 // 5. personal area -- favorites
-//      A. mUser picture -- add option to take a new pic
+//      A. mUser picture -- change to default pic (delete shared preferences)
 //      B. get to article from favorite-- "not executable code" -- recheck again later
 // 6. app intro
 

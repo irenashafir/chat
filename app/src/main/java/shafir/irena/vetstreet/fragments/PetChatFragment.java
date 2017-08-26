@@ -20,10 +20,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import butterknife.BindView;
@@ -32,7 +30,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import shafir.irena.vetstreet.R;
 import shafir.irena.vetstreet.models.ChatItem;
-import shafir.irena.vetstreet.models.User;
 
 import static shafir.irena.vetstreet.fragments.NewChatFragment.ARG_CHAT;
 
@@ -90,7 +87,7 @@ public class PetChatFragment extends Fragment {
 
 
     private void setUpRecycler() {
-        ChatAdapter adapter = new ChatAdapter(getActivity(),mDatabase.getReference(ARG_CHAT).orderByChild("date"), user, mAuth);
+        ChatAdapter adapter = new ChatAdapter(getActivity(),mDatabase.getReference(ARG_CHAT), user);
         rvChat.setAdapter(adapter);
         rvChat.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabase.getReference(ARG_CHAT).addChildEventListener(new ChildEventListener() {
@@ -127,13 +124,17 @@ public class PetChatFragment extends Fragment {
         public static class ChatAdapter extends FirebaseRecyclerAdapter<ChatItem, ChatAdapter.ChatViewHolder> {
             Activity activity;
             FirebaseUser mUser;
-            FirebaseAuth mAuth;
 
-            public ChatAdapter(Activity activity, Query query, FirebaseUser user, FirebaseAuth mAuth) {
+            public ChatAdapter(Activity activity, Query query, FirebaseUser user) {
                 super(ChatItem.class, R.layout.chat_item, ChatViewHolder.class, query);
                 this.activity = activity;
                 this.mUser = user;
-                this.mAuth = mAuth;
+            }
+
+            @Override
+            public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(activity).inflate(viewType, parent, false);
+                return new ChatViewHolder(view);
             }
 
             @Override
@@ -155,12 +156,11 @@ public class PetChatFragment extends Fragment {
                 TextView tvText;
                 TextView tvTime;
                 CircularImageView ivProfile;
-                User user;
                 Fragment fragment;
+                FirebaseUser user;
 
-                public ChatViewHolder(View itemView, Fragment fragment) {
+                public ChatViewHolder(View itemView) {
                     super(itemView);
-                    this.fragment = fragment;
                     tvName = (TextView) itemView.findViewById(R.id.tvName);
                     tvText = (TextView) itemView.findViewById(R.id.tvText);
                     tvTime = (TextView) itemView.findViewById(R.id.tvTime);
@@ -169,25 +169,17 @@ public class PetChatFragment extends Fragment {
                     itemView.setOnClickListener(this);
                 }
 
+
                 @Override
-                public void onClick(View v) {
-                    DatabaseReference userChat = FirebaseDatabase.getInstance().getReference(ARG_CHAT).child(user.getUid());
-                    userChat.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.getValue() == user.getUid()){
-                                ChatClickFragment editChat = new ChatClickFragment();
-                                editChat.show(fragment.getChildFragmentManager(), "editChat");
-                            }
-                        }
+            public void onClick(View v) {
+//                user = FirebaseAuth.getInstance().getCurrentUser();
+//
+//                ChatClickFragment editChat = new ChatClickFragment();
+//                editChat.show(fragment.getChildFragmentManager(), "editChat");
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
-                }
             }
+        }
 
         }
 

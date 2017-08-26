@@ -72,7 +72,6 @@ public class NewChatFragment extends BottomSheetDialogFragment {
         }
 
         if (user.isAnonymous()) {
-
             User anonymousUser = new User("Anonymous",
                     String.valueOf(R.drawable.com_facebook_profile_picture_blank_portrait),
                     user.getUid(),
