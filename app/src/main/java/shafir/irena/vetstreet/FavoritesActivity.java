@@ -1,11 +1,13 @@
 package shafir.irena.vetstreet;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,11 +35,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pl.aprilapps.easyphotopicker.EasyImage;
 import shafir.irena.vetstreet.fragments.FavoritesFragment;
-import shafir.irena.vetstreet.fragments.UndoFragment;
 
-import static shafir.irena.vetstreet.fragments.UndoFragment.DEFAULT_PIC;
 
-public class FavoritesActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class FavoritesActivity extends AppCompatActivity {
     public static final int RC_CFM = 123;
     private static final String IMAGES = "images";
     public static final String MY_PHOTO = "myPhoto";
@@ -59,16 +59,17 @@ public class FavoritesActivity extends AppCompatActivity implements SharedPrefer
     FrameLayout frFavorites;
     @BindView(R.id.ivImage)
     CircularImageView ivImage;
-    @BindView(R.id.tvChangePic)
-    TextView tvChangePic;
+    @BindView(R.id.tvReset)
+    TextView tvReset;
 
     FirebaseStorage storage;
     String picPath;
     @BindView(R.id.fabBack)
     FloatingActionButton fabBack;
+    @BindView(R.id.favorite_main)
+    ConstraintLayout favoriteMain;
     private SharedPreferences pref;
-
-
+    Uri photoUrl;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -79,15 +80,7 @@ public class FavoritesActivity extends AppCompatActivity implements SharedPrefer
         mDatabase = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         pref = getSharedPreferences(MY_PHOTO, MODE_PRIVATE);
-//        pref = PreferenceManager.getDefaultSharedPreferences(this);
-        pref.registerOnSharedPreferenceChangeListener(this);
         picPath = pref.getString(MY_PHOTO, null);
-
-        pref = getSharedPreferences(DEFAULT_PIC, MODE_PRIVATE);
-        boolean refresh = pref.getBoolean(DEFAULT_PIC, false);
-        if (refresh){
-            onSharedPreferenceChanged(pref, SHARED_PREFS);
-        }
 
         userSettings();
 
@@ -99,7 +92,7 @@ public class FavoritesActivity extends AppCompatActivity implements SharedPrefer
     private void userSettings() {
         if (currentUser != null) {
             String displayName = currentUser.getDisplayName();
-            Uri photoUrl = currentUser.getPhotoUrl();
+            photoUrl = currentUser.getPhotoUrl();
             String email = currentUser.getEmail();
 
             tvUserName.setText(displayName);
@@ -117,25 +110,9 @@ public class FavoritesActivity extends AppCompatActivity implements SharedPrefer
         }
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key .equals(DEFAULT_PIC)) {
-            pref = getSharedPreferences(DEFAULT_PIC, MODE_PRIVATE);
-            boolean refresh = pref.getBoolean(DEFAULT_PIC, false);
-            if (refresh){
-                recreate();
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putBoolean(DEFAULT_PIC, false);
-                editor.apply();
-            }
-            recreate();
-        }
-    }
 
-
-
-    @OnClick(R.id.tvChangePic)
-    public void onNewPicClicked() {
+    @OnClick(R.id.ivImage)
+    public void onViewClicked() {
         newPic();
     }
     public void newPic() {
@@ -191,12 +168,11 @@ public class FavoritesActivity extends AppCompatActivity implements SharedPrefer
         editor.putString(MY_PHOTO, picPath);
         editor.apply();
     }
-
     private boolean checkForPermissions() {
-        int permission = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         boolean granted = permission == PackageManager.PERMISSION_GRANTED;
         if (!granted) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, RC_CFM);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, RC_CFM);
         }
         return granted;
     }
@@ -208,24 +184,54 @@ public class FavoritesActivity extends AppCompatActivity implements SharedPrefer
         }
     }
 
-
-    @OnClick(R.id.fabBack)
-    public void onFabClicked() {
-        UndoFragment undo = new UndoFragment();
-        undo.show(getSupportFragmentManager(), UNDO);
+    @OnClick(R.id.tvReset)
+    public void onNewPicClicked() {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(MY_PHOTO, null);
+        editor.apply();
+        finish();
+        startActivity(getIntent());
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(picPath, MY_PHOTO);
     }
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         picPath = savedInstanceState.getString(MY_PHOTO);
     }
+
+
+
+
+
+    @OnClick(R.id.fabBack)
+    public void onFabClicked() {
+//        final Object[] value = new Object[1];
+//        Query query = mDatabase.getReference(DB_DELETED).child(currentUser.getUid()).limitToLast(1);
+//
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public synchronized void onDataChange(DataSnapshot dataSnapshot) {
+//                value[0] = dataSnapshot.getValue();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//        if (value[0] == null)return;
+//        DatabaseReference databaseReference = mDatabase.getReference(DB_FAVORITES).child(currentUser.getUid());
+//        databaseReference.push().setValue(value[0]);
+    }
+
+
+
 
 
 

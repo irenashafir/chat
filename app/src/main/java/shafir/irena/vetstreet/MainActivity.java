@@ -403,10 +403,10 @@ public class MainActivity extends AppCompatActivity
 // TODO:
 // 1. vets around me with google map -- not finished
 // 2. notifications
-// 3. finish onClick in petChatFragment --- on click doesnt work
+// 3. finish onClick in petChatFragment --- on click doesn't work
 // 4. check e mail sending?!
 // 5. personal area -- favorites
-//      A. mUser picture -- change to default pic -- need to add refresh to activity after pic change
+//      A. resize pic before upload to storage
 //      B. add option to undo delete (save deleted to shared prefs in Que)
 //      C. get to article from favorite-- "not executable code" -- recheck again later
 // 6. app intro
