@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
@@ -37,12 +36,13 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 import shafir.irena.vetstreet.fragments.FavoritesFragment;
 
 
-public class FavoritesActivity extends AppCompatActivity {
+public class FavoritesActivity extends AppCompatActivity{
     public static final int RC_CFM = 123;
     private static final String IMAGES = "images";
     public static final String MY_PHOTO = "myPhoto";
     private static final String UNDO = "unDo";
     private static final String SHARED_PREFS = "shared prefs";
+    private boolean isInFavorites;
 
 
     FirebaseDatabase mDatabase;
@@ -64,8 +64,6 @@ public class FavoritesActivity extends AppCompatActivity {
 
     FirebaseStorage storage;
     String picPath;
-    @BindView(R.id.fabBack)
-    FloatingActionButton fabBack;
     @BindView(R.id.favorite_main)
     ConstraintLayout favoriteMain;
     private SharedPreferences pref;
@@ -83,7 +81,6 @@ public class FavoritesActivity extends AppCompatActivity {
         picPath = pref.getString(MY_PHOTO, null);
 
         userSettings();
-
         getSupportFragmentManager().beginTransaction().replace(R.id.frFavorites, new FavoritesFragment())
                 .addToBackStack("myFavorites").commit();
 
@@ -132,6 +129,7 @@ public class FavoritesActivity extends AppCompatActivity {
             @Override
             public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
                 final Uri uri = Uri.fromFile(imageFile);
+
                 Picasso.with(FavoritesActivity.this).load(uri).into(ivImage);
 
                 picPath = imageFile.getAbsolutePath();
@@ -204,35 +202,6 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         picPath = savedInstanceState.getString(MY_PHOTO);
     }
-
-
-
-
-
-    @OnClick(R.id.fabBack)
-    public void onFabClicked() {
-//        final Object[] value = new Object[1];
-//        Query query = mDatabase.getReference(DB_DELETED).child(currentUser.getUid()).limitToLast(1);
-//
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public synchronized void onDataChange(DataSnapshot dataSnapshot) {
-//                value[0] = dataSnapshot.getValue();
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//        if (value[0] == null)return;
-//        DatabaseReference databaseReference = mDatabase.getReference(DB_FAVORITES).child(currentUser.getUid());
-//        databaseReference.push().setValue(value[0]);
-    }
-
-
-
-
 
 
 }

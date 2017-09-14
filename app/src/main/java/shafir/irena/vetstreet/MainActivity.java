@@ -70,34 +70,6 @@ public class MainActivity extends AppCompatActivity
     String contactText = null;
 
 
-    FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
-        @Override
-        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            mUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (mUser == null) {
-                mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                            User user = new User(currentUser);
-                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-                            reference.setValue(user);
-
-                            Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                            Toast.makeText(MainActivity.this, "pls try again", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }
-    };
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +107,36 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (mUser == null) {
+                mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                            User user = new User(currentUser);
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+                            reference.setValue(user);
+
+                            Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                            Toast.makeText(MainActivity.this, "Authentication not complete", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -147,6 +149,7 @@ public class MainActivity extends AppCompatActivity
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -350,11 +353,13 @@ public class MainActivity extends AppCompatActivity
                 new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
 
         Intent intent = AuthUI.getInstance().createSignInIntentBuilder()
-                .setLogo(R.mipmap.logo_big)
                 .setAvailableProviders(providers)
                 .build();
+
         startActivityForResult(intent, RC_SIGN_IN);
     }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -404,10 +409,5 @@ public class MainActivity extends AppCompatActivity
 // 1. vets around me with google map -- not finished
 // 2. notifications
 // 3. finish onClick in petChatFragment --- on click doesn't work
-// 4. check e mail sending?!
-// 5. personal area -- favorites
-//      A. resize pic before upload to storage
-//      B. add option to undo delete (save deleted to shared prefs in Que)
-//      C. get to article from favorite-- "not executable code" -- recheck again later
-// 6. app intro
+// 4. app intro
 

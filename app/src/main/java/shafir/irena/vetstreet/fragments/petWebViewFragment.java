@@ -36,7 +36,7 @@ import shafir.irena.vetstreet.models.Favorite;
 public class petWebViewFragment extends Fragment implements View.OnClickListener {
 
     public static final String ARG_URL = "url";
-    protected static final String ARG_TITLE = "title";
+    public static final String ARG_TITLE = "title";
     private static final String ARG_DESCRIPTION = "description";
     private static final String ARG_IMAGE = "image";
     public static final String DB_FAVORITES = "favorites";
@@ -107,14 +107,16 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
         });
         webView.loadUrl(url);
 
-        checkFavoritesInDB();
+        if (user != null) {
+            checkFavoritesInDB();
+        }
         return v;
     }
 
     @Override
     public void onClick(View v) {
         final String url = getArguments().getString(ARG_URL);
-        if (user.isAnonymous()) {
+        if (user == null|| user.isAnonymous()) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Registration").setMessage("You Must be a Registered User to Use Favorites");
             builder.setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
@@ -146,6 +148,7 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
 
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference(DB_FAVORITES).child(user.getUid());
                 ref.push().setValue(favorite);
+                fbLike.setImageResource(R.drawable.ic_added);
             }
             else
                 Toast.makeText(getContext(), "Article is already in Favorites", Toast.LENGTH_SHORT).show();

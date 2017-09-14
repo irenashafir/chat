@@ -2,7 +2,6 @@ package shafir.irena.vetstreet.fragments;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,11 +24,9 @@ import com.google.firebase.database.Query;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import shafir.irena.vetstreet.MainActivity;
 import shafir.irena.vetstreet.R;
 import shafir.irena.vetstreet.models.Favorite;
 
-import static shafir.irena.vetstreet.fragments.petWebViewFragment.ARG_URL;
 import static shafir.irena.vetstreet.fragments.petWebViewFragment.DB_FAVORITES;
 
 /**
@@ -138,12 +135,8 @@ public class FavoritesFragment extends Fragment {
                     share.show(fragment.getChildFragmentManager(), DB_FAVORITES);
 
                 } else if (v == tvTitle | v == tvDescription){
-                    Intent viewFavorite = new Intent(getContext(), MainActivity.class);
-                    viewFavorite.putExtra(ARG_URL, model.getLink());
-                    viewFavorite.putExtra("fullArticle", true);
-                    if (viewFavorite.resolveActivity(activity.getPackageManager()) != null){
-                        startActivity(viewFavorite);
-                    }
+                    getFragmentManager().beginTransaction().replace(R.id.favorite_main,
+                            petWebViewFragment.newInstance(model.getLink())).commit();
                 }
             }
         }

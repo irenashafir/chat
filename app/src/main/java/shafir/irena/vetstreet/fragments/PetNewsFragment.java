@@ -28,7 +28,6 @@ import shafir.irena.vetstreet.R;
 public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLatestNewsArrivedListener {
 
     private static final String ARG_URL = "url address";
-    private static final java.lang.String ARG_TYPE = "url type";
     RecyclerView rvLatestNews;
 
     public PetNewsFragment() {
@@ -133,9 +132,7 @@ public class PetNewsFragment extends Fragment implements PetNewsDataSource.onLat
                     petWebViewFragment webViewFragment = petWebViewFragment.newInstance
                             (petNews.getLink(), petNews.getTitle(), petNews.getDescription(), petNews.getImage());
 
-                    fm.beginTransaction().replace(R.id.mainContainer,
-                            webViewFragment).addToBackStack("Full Article").commit();
-
+                    fm.beginTransaction().replace(R.id.mainContainer, webViewFragment).commit();
                 }
             }
         }

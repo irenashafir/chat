@@ -30,7 +30,7 @@ public class Favorite implements Parcelable{
         this.image = image;
     }
 
-    protected Favorite(Parcel in) {
+    public Favorite(Parcel in) {
         link = in.readString();
         userUID = in.readString();
         userName = in.readString();
