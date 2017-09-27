@@ -49,7 +49,12 @@
         <activity
             android:name=".FindAVetActivity"
             android:label="@string/title_activity_find_avet" />
-        <activity android:name=".FavoritesActivity"></activity>
+        <activity android:name=".FavoritesActivity" />
+
+        <service
+            android:name=".NotificationService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

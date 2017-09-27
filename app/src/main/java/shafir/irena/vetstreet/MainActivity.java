@@ -1,6 +1,9 @@
 package shafir.irena.vetstreet;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -83,14 +86,14 @@ public class MainActivity extends AppCompatActivity
 
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        mUser= mAuth.getCurrentUser();
+        mUser = mAuth.getCurrentUser();
 
 
-        if (wantToSignIn){
+        if (wantToSignIn) {
             signIn();
         }
 
-        if (cameFromFavorite){
+        if (cameFromFavorite) {
             String url = getIntent().getStringExtra(ARG_URL);
             getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, petWebViewFragment.newInstance(url)).commit();
         }
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        notification();
     }
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -115,15 +119,14 @@ public class MainActivity extends AppCompatActivity
                 mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                             User user = new User(currentUser);
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
                             reference.setValue(user);
 
                             Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
-                        }
-                        else
+                        } else
                             Toast.makeText(MainActivity.this, "Authentication not complete", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -142,6 +145,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         mAuth.addAuthStateListener(mAuthListener);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -159,12 +163,14 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -175,14 +181,14 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.action_settings:
                 startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
-                  return true;
+                return true;
 
             case R.id.about:
-                petWebViewFragment petWebViewFragment =  new petWebViewFragment();
+                petWebViewFragment petWebViewFragment = new petWebViewFragment();
                 petWebViewFragment shoppingFragment =
                         petWebViewFragment.newInstance("http://www.vetstreet.com/about");
                 getSupportFragmentManager().beginTransaction().replace
-                        (R.id.mainFrame, shoppingFragment ).addToBackStack("main").commit();
+                        (R.id.mainFrame, shoppingFragment).addToBackStack("main").commit();
                 return true;
 
             case R.id.contact:
@@ -227,7 +233,7 @@ public class MainActivity extends AppCompatActivity
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                        dialog.dismiss();
                     }
                 });
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -242,10 +248,9 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.sign_in:
                 if (mUser == null || mUser.isAnonymous()) {
-                   signIn();
+                    signIn();
 
-                }
-                else
+                } else
                     Toast.makeText(this, "You Are Already Signed In", Toast.LENGTH_SHORT).show();
                 return true;
         }
@@ -276,13 +281,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             }
             case R.id.favorites: {
-                if (mUser.isAnonymous()){
+                if (mUser.isAnonymous()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Favorites").setMessage("Must be a registered user to user favorites");
                     builder.setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                       dialog.dismiss();
+                            dialog.dismiss();
                         }
                     });
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -292,8 +297,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
                     builder.show();
-                }
-                else if (mUser != null && !mUser.isAnonymous()) {
+                } else if (mUser != null && !mUser.isAnonymous()) {
                     Intent intent = new Intent(this, FavoritesActivity.class);
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivity(intent);
@@ -311,7 +315,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.pet_Chat:
                 getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, new PetChatFragment())
                         .addToBackStack("main").commit();
-                    break;
+                break;
 
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
@@ -353,7 +357,7 @@ public class MainActivity extends AppCompatActivity
                 new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
 
         Intent intent = AuthUI.getInstance().createSignInIntentBuilder()
-                .setAvailableProviders(providers)
+                .setAvailableProviders(providers).setIsSmartLockEnabled(!BuildConfig.DEBUG)
                 .build();
 
         startActivityForResult(intent, RC_SIGN_IN);
@@ -377,37 +381,44 @@ public class MainActivity extends AppCompatActivity
                             .addToBackStack("main").commit();
                 }
             }
-                if ((idpResponse != null ? idpResponse.getErrorCode() : 0) == ErrorCodes.NO_NETWORK){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("No Internet Connection").setMessage("Would you like to Reconnect?");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.setClassName("com.android.phone", "com.android.phone.NetworkSetting");
-                            if (intent.resolveActivity(getPackageManager()) != null) {
-                                startActivity(intent);
-                            }
+            if ((idpResponse != null ? idpResponse.getErrorCode() : 0) == ErrorCodes.NO_NETWORK) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("No Internet Connection").setMessage("Would you like to Reconnect?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.setClassName("com.android.phone", "com.android.phone.NetworkSetting");
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
                         }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.show();
-                }
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
             }
         }
-
     }
 
 
+     public  void notification() {
+        Intent intent = new Intent(this, NotificationService.class);
+        PendingIntent pi = PendingIntent.getService(this, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC,  1000*60*60*24*30, 1000*60*60*24*30, pi);
+    }
+}
 
-// TODO:
-// 1. vets around me with google map -- not finished
-// 2. notifications
-// 3. finish onClick in petChatFragment --- on click doesn't work
-// 4. app intro
 
+
+// TODO: MUSTS: app intro
+
+// optional:
+//1. onclick on petChatFragment
+//2. return option after delete favorite -- using broadcast receiver
+//3. onSwipe to delete favorites

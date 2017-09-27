@@ -124,6 +124,7 @@ public class PetChatFragment extends Fragment {
         public static class ChatAdapter extends FirebaseRecyclerAdapter<ChatItem, ChatAdapter.ChatViewHolder> {
             Activity activity;
             FirebaseUser mUser;
+            String userName;
 
             public ChatAdapter(Activity activity, Query query, FirebaseUser user) {
                 super(ChatItem.class, R.layout.chat_item, ChatViewHolder.class, query);
@@ -144,14 +145,15 @@ public class PetChatFragment extends Fragment {
                 viewHolder.tvTime.setText(model.getTime());
                 if (model.getProfileImage() != null) {
                     Glide.with(activity).load(model.getProfileImage()).into(viewHolder.ivProfile);
-                }
-                else {
+                } else {
                     Glide.with(activity).load(R.drawable.com_facebook_profile_picture_blank_portrait)
                             .into(viewHolder.ivProfile);
                 }
+
+                this.userName = model.getUserName();
             }
 
-            public static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            public static class ChatViewHolder extends RecyclerView.ViewHolder {
                 TextView tvName;
                 TextView tvText;
                 TextView tvTime;
@@ -166,22 +168,12 @@ public class PetChatFragment extends Fragment {
                     tvTime = (TextView) itemView.findViewById(R.id.tvTime);
                     ivProfile = (CircularImageView) itemView.findViewById(R.id.ivProfile);
 
-                    itemView.setOnClickListener(this);
+                //    itemView.setOnClickListener(this);
                 }
 
 
-                @Override
-            public void onClick(View v) {
-//                user = FirebaseAuth.getInstance().getCurrentUser();
-//
-//                ChatClickFragment editChat = new ChatClickFragment();
-//                editChat.show(fragment.getChildFragmentManager(), "editChat");
-
-
             }
-        }
 
         }
-
 
 }
