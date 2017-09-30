@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,6 +42,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import shafir.irena.vetstreet.app_intro.IntroActivity;
 import shafir.irena.vetstreet.fragments.PetChatFragment;
 import shafir.irena.vetstreet.fragments.petWebViewFragment;
 import shafir.irena.vetstreet.models.User;
@@ -81,6 +83,18 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        SharedPreferences prefs = getSharedPreferences("appIntroduction", MODE_PRIVATE);
+        boolean shouldShowIntro = prefs.getBoolean("shouldShowIntro", true);
+
+        if (shouldShowIntro){
+            Intent intent = new Intent(this, IntroActivity.class);
+            startActivity(intent);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("shouldShowIntro", false);
+            editor.commit();
+            this.finish();
+        }
+
         boolean wantToSignIn = getIntent().getBooleanExtra("wantToSignIn", false);
         boolean cameFromFavorite = getIntent().getBooleanExtra("fullArticle", false);
 
@@ -110,6 +124,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         notification();
     }
+
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
         @Override
@@ -416,9 +431,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
-// TODO: MUSTS: app intro
-
-// optional:
+// TODO: optional:
 //1. onclick on petChatFragment
 //2. return option after delete favorite -- using broadcast receiver
 //3. onSwipe to delete favorites
+//4. change ntifications to job dispatchers
+

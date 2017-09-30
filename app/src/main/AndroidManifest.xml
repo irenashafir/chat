@@ -54,7 +54,9 @@
         <service
             android:name=".NotificationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".app_intro.IntroActivity"></activity>
     </application>
 
 </manifest>
