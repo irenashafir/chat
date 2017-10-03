@@ -1,6 +1,7 @@
 package shafir.irena.vetstreet;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,8 +10,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +24,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -34,15 +42,25 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pl.aprilapps.easyphotopicker.EasyImage;
 import shafir.irena.vetstreet.fragments.FavoritesFragment;
+import shafir.irena.vetstreet.fragments.ShareFavoriteFragment;
+
+import static shafir.irena.vetstreet.fragments.ShareFavoriteFragment.DB_DELETED;
+import static shafir.irena.vetstreet.fragments.petWebViewFragment.DB_FAVORITES;
 
 
-public class FavoritesActivity extends AppCompatActivity{
+public class FavoritesActivity extends AppCompatActivity implements ShareFavoriteFragment.lastDeleted {
     public static final int RC_CFM = 123;
-    private static final String IMAGES = "images";
     public static final String MY_PHOTO = "myPhoto";
-    private static final String UNDO = "unDo";
-    private static final String SHARED_PREFS = "shared prefs";
-    private boolean isInFavorites;
+    public static final String UNDO = "unDo";
+
+    @BindView(R.id.ibDeleteAll)
+    ImageButton ibDeleteAll;
+    @BindView(R.id.ibImageReset)
+    ImageButton ibImageReset;
+    @BindView(R.id.ibUndoDelete)
+    ImageButton ibUndoDelete;
+    @BindView(R.id.ibHome)
+    ImageButton ibHome;
 
 
     FirebaseDatabase mDatabase;
@@ -59,15 +77,17 @@ public class FavoritesActivity extends AppCompatActivity{
     FrameLayout frFavorites;
     @BindView(R.id.ivImage)
     CircularImageView ivImage;
-    @BindView(R.id.tvReset)
-    TextView tvReset;
+
 
     FirebaseStorage storage;
     String picPath;
     @BindView(R.id.favorite_main)
     ConstraintLayout favoriteMain;
     private SharedPreferences pref;
+    private SharedPreferences articlePref;
     Uri photoUrl;
+    String savedLast =null;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -77,8 +97,12 @@ public class FavoritesActivity extends AppCompatActivity{
 
         mDatabase = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         pref = getSharedPreferences(MY_PHOTO, MODE_PRIVATE);
         picPath = pref.getString(MY_PHOTO, null);
+
+        articlePref = getSharedPreferences(UNDO, MODE_PRIVATE);
+         savedLast = articlePref.getString(UNDO, null);
 
         userSettings();
         getSupportFragmentManager().beginTransaction().replace(R.id.frFavorites, new FavoritesFragment())
@@ -106,8 +130,6 @@ public class FavoritesActivity extends AppCompatActivity{
             }
         }
     }
-
-
     @OnClick(R.id.ivImage)
     public void onViewClicked() {
         newPic();
@@ -181,26 +203,125 @@ public class FavoritesActivity extends AppCompatActivity{
             newPic();
         }
     }
-
-    @OnClick(R.id.tvReset)
-    public void onNewPicClicked() {
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(MY_PHOTO, null);
-        editor.apply();
-        finish();
-        startActivity(getIntent());
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(picPath, MY_PHOTO);
     }
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         picPath = savedInstanceState.getString(MY_PHOTO);
+    }
+
+
+    @OnClick({R.id.ibDeleteAll, R.id.ibImageReset, R.id.ibUndoDelete, R.id.ibHome})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.ibDeleteAll:
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Delete All").setMessage("Are you sure you want to delete all articles?")
+                        .setNegativeButton("no way!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        }).setPositiveButton("Of course!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteAll(DB_FAVORITES);
+                    }
+                });
+                builder.show();
+                break;
+
+            case R.id.ibImageReset:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(MY_PHOTO, null);
+                editor.apply();
+                finish();
+                Toast.makeText(this, "Profile Picture has been Reset", Toast.LENGTH_SHORT).show();
+                startActivity(getIntent());
+                break;
+
+            case R.id.ibUndoDelete:
+                if (savedLast == null){
+                    Toast.makeText(this, "No Articles to return", Toast.LENGTH_SHORT).show();
+                    break;
+                } else {
+                    DatabaseReference reference = mDatabase.getReference(DB_DELETED).child(currentUser.getUid());
+                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot favoriteSnapShot : dataSnapshot.getChildren()) {
+                                //noinspection ConstantConditions
+                                if (favoriteSnapShot.child("title").getValue().equals(savedLast)) {
+                                    DatabaseReference databaseReference = mDatabase.getReference(DB_FAVORITES).child(currentUser.getUid());
+                                    databaseReference.push().setValue(favoriteSnapShot.getValue());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(FavoritesActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    DatabaseReference deletedRef = mDatabase.getReference(DB_DELETED).child(currentUser.getUid());
+                    deletedRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot favoriteSnapShot : dataSnapshot.getChildren()) {
+                                //noinspection ConstantConditions
+                                if (favoriteSnapShot.child("title").getValue().equals(savedLast)) {
+                                    favoriteSnapShot.getRef().removeValue();
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(FavoritesActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                break;
+            case R.id.ibHome:
+                Intent homeIntent = new Intent(this, MainActivity.class);
+                if (homeIntent.resolveActivity(getPackageManager()) != null){
+                    startActivity(homeIntent);
+                }
+                break;
+        }
+    }
+
+    private void deleteAll(String type) {
+        DatabaseReference child = mDatabase.getReference(type).child(currentUser.getUid());
+        child.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    snapshot.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(FavoritesActivity.this, "Error! Try Again", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    @Override
+    public void lastDeletedListener(String articleName) {
+        savedLast = articleName;
+            saveArticleName();
+    }
+
+    private void saveArticleName() {
+        SharedPreferences.Editor editor = articlePref.edit();
+        editor.putString(UNDO, savedLast);
+        editor.apply();
     }
 
 

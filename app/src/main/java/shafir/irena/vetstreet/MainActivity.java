@@ -276,9 +276,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         switch (id) {
             case R.id.home: {
                 Intent intent = new Intent(this, MainActivity.class);
@@ -377,8 +375,6 @@ public class MainActivity extends AppCompatActivity
 
         startActivityForResult(intent, RC_SIGN_IN);
     }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -419,8 +415,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
-
      public  void notification() {
         Intent intent = new Intent(this, NotificationService.class);
         PendingIntent pi = PendingIntent.getService(this, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -433,7 +427,6 @@ public class MainActivity extends AppCompatActivity
 
 // TODO: optional:
 //1. onclick on petChatFragment
-//2. return option after delete favorite -- using broadcast receiver
-//3. onSwipe to delete favorites
-//4. change ntifications to job dispatchers
+//2. onSwipe to delete favorites
+//3. change notifications to job dispatchers
 

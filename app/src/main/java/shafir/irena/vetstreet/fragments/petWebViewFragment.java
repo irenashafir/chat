@@ -49,6 +49,8 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
     FirebaseDatabase mDatabase;
     FirebaseUser user;
     Favorite tempFav;
+    String FBTitle;
+
 
     public petWebViewFragment() {
         // Required empty public constructor
@@ -160,11 +162,10 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
         child.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                String title = getArguments().getString("title");
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                    String FBTitle = snapshot.child("title").getValue().toString().trim();
-                    String title = getArguments().getString("title");
-
+                    FBTitle = snapshot.child("title").getValue().toString().trim();
                     if (FBTitle.equals(title)) {
                         isInFavorites = true;
                         fbLike.setImageResource(R.drawable.ic_added);

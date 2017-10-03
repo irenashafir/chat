@@ -1,6 +1,7 @@
 package shafir.irena.vetstreet.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -50,7 +51,18 @@ public class ShareFavoriteFragment extends BottomSheetDialogFragment {
 
     FirebaseDatabase mDatabase;
     FirebaseUser currentUser;
+    private lastDeleted listener;
 
+
+    public interface lastDeleted{
+        void lastDeletedListener(String articleName);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.listener = (lastDeleted) getActivity();
+    }
 
     public ShareFavoriteFragment() {
         // Required empty public constructor
@@ -64,7 +76,6 @@ public class ShareFavoriteFragment extends BottomSheetDialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
 
 
     @Override
@@ -118,13 +129,12 @@ public class ShareFavoriteFragment extends BottomSheetDialogFragment {
 
                     if (favoriteSnapShot.child("title").getValue().equals(articleTitle)){
                         favoriteSnapShot.getRef().removeValue();
-                        addFavoriteToDeleted(favoriteSnapShot);
+                        addFavoriteToDeletedDB(favoriteSnapShot);
                         getActivity().recreate();
-
+                        listener.lastDeletedListener(articleTitle);
                         dismiss();
                     }
                 }
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -134,7 +144,7 @@ public class ShareFavoriteFragment extends BottomSheetDialogFragment {
     }
 
 
-    private void addFavoriteToDeleted(DataSnapshot favoriteSnapShot) {
+    private void addFavoriteToDeletedDB(DataSnapshot favoriteSnapShot) {
         String title = (String) favoriteSnapShot.child("title").getValue();
         String link = (String) favoriteSnapShot.child("link").getValue();
         String description = (String) favoriteSnapShot.child("description").getValue();
@@ -144,9 +154,7 @@ public class ShareFavoriteFragment extends BottomSheetDialogFragment {
 
         DatabaseReference deleted_DB_Ref = mDatabase.getReference(DB_DELETED).child(currentUser.getUid());
         deleted_DB_Ref.push().setValue(favorite);
-
     }
-
     private void ShareArticle() {
         String url = getArguments().getString(ARG_URL);
         Intent sendIntent = new Intent();
