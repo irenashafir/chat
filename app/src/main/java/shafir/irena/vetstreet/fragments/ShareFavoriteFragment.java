@@ -155,6 +155,7 @@ public class ShareFavoriteFragment extends BottomSheetDialogFragment {
         DatabaseReference deleted_DB_Ref = mDatabase.getReference(DB_DELETED).child(currentUser.getUid());
         deleted_DB_Ref.push().setValue(favorite);
     }
+
     private void ShareArticle() {
         String url = getArguments().getString(ARG_URL);
         Intent sendIntent = new Intent();

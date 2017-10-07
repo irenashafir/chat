@@ -19,7 +19,7 @@
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@android:drawable/btn_star" />
+        app:srcCompat="@mipmap/btn_star" />
 
     <WebView
         android:id="@+id/webView"

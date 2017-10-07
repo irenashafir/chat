@@ -1,9 +1,6 @@
 package shafir.irena.vetstreet;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +22,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.Trigger;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -39,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,6 +87,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        notification();
+
         SharedPreferences prefs = getSharedPreferences("appIntroduction", MODE_PRIVATE);
         boolean shouldShowIntro = prefs.getBoolean("shouldShowIntro", true);
 
@@ -122,7 +128,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        notification();
     }
 
 
@@ -415,11 +420,21 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-     public  void notification() {
-        Intent intent = new Intent(this, NotificationService.class);
-        PendingIntent pi = PendingIntent.getService(this, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC,  1000*60*60*24*30, 1000*60*60*24*30, pi);
+
+
+    private void notification(){
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+        int secondsToStart = (int) TimeUnit.HOURS.toSeconds(1);
+        int start = secondsToStart*24*30;
+        Job job = dispatcher.newJobBuilder()
+                .setTag("Notification")
+                .setService(NotificationService.class)
+                .setLifetime(Lifetime.FOREVER)
+                .setRecurring(true)
+                .setConstraints(Constraint.DEVICE_CHARGING, Constraint.ON_UNMETERED_NETWORK, Constraint.DEVICE_IDLE)
+                .setTrigger(Trigger.executionWindow(start, start*2)).build();
+
+        dispatcher.mustSchedule(job);
     }
 }
 
@@ -428,5 +443,4 @@ public class MainActivity extends AppCompatActivity
 // TODO: optional:
 //1. onclick on petChatFragment
 //2. onSwipe to delete favorites
-//3. change notifications to job dispatchers
 

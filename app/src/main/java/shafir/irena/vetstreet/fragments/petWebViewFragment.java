@@ -152,8 +152,25 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
                 ref.push().setValue(favorite);
                 fbLike.setImageResource(R.drawable.ic_added);
             }
-            else
-                Toast.makeText(getContext(), "Article is already in Favorites", Toast.LENGTH_SHORT).show();
+            else if (checkFavoritesInDB()){
+                DatabaseReference databaseReference = mDatabase.getReference(DB_FAVORITES).child(user.getUid());
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            if (snapshot.child("link").getValue().equals(url)){
+                                snapshot.getRef().removeValue();
+                                fbLike.setImageResource(R.mipmap.btn_star);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
         }
     }
 
@@ -180,6 +197,5 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
         });
         return isInFavorites;
     }
-
 
 }
