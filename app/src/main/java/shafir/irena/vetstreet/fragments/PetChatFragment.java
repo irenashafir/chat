@@ -87,7 +87,7 @@ public class PetChatFragment extends Fragment {
 
 
     private void setUpRecycler() {
-        ChatAdapter adapter = new ChatAdapter(getActivity(),mDatabase.getReference(ARG_CHAT), user);
+        ChatAdapter adapter = new ChatAdapter(getActivity(),mDatabase.getReference(ARG_CHAT), user, this);
         rvChat.setAdapter(adapter);
         rvChat.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabase.getReference(ARG_CHAT).addChildEventListener(new ChildEventListener() {
@@ -104,7 +104,6 @@ public class PetChatFragment extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Toast.makeText(getContext(), "Message Moved", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -125,17 +124,14 @@ public class PetChatFragment extends Fragment {
             Activity activity;
             FirebaseUser mUser;
             String userName;
+            Fragment fragment;
 
-            public ChatAdapter(Activity activity, Query query, FirebaseUser user) {
+            public ChatAdapter(Activity activity, Query query, FirebaseUser user, Fragment fragment) {
                 super(ChatItem.class, R.layout.chat_item, ChatViewHolder.class, query);
                 this.activity = activity;
                 this.mUser = user;
-            }
-
-            @Override
-            public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(activity).inflate(viewType, parent, false);
-                return new ChatViewHolder(view);
+                this.userName = user.getDisplayName();
+                this.fragment = fragment;
             }
 
             @Override
@@ -150,28 +146,43 @@ public class PetChatFragment extends Fragment {
                             .into(viewHolder.ivProfile);
                 }
 
-                this.userName = model.getUserName();
+                viewHolder.model = model;
             }
 
-            public static class ChatViewHolder extends RecyclerView.ViewHolder {
+            @Override
+            public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(activity).inflate(viewType, parent, false);
+                return new ChatViewHolder(view, fragment);
+            }
+
+            public static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
                 TextView tvName;
                 TextView tvText;
                 TextView tvTime;
                 CircularImageView ivProfile;
+                ChatItem model;
                 Fragment fragment;
-                FirebaseUser user;
 
-                public ChatViewHolder(View itemView) {
+                public ChatViewHolder(View itemView, Fragment fragment) {
                     super(itemView);
                     tvName = (TextView) itemView.findViewById(R.id.tvName);
                     tvText = (TextView) itemView.findViewById(R.id.tvText);
                     tvTime = (TextView) itemView.findViewById(R.id.tvTime);
                     ivProfile = (CircularImageView) itemView.findViewById(R.id.ivProfile);
 
-                //    itemView.setOnClickListener(this);
+                    this.fragment = fragment;
+                    itemView.setOnClickListener(this);
                 }
 
-
+                @Override
+                public void onClick(View v) {
+                    if (tvName.getText().toString().equals(model.getUserName())){
+                    EditChatFragment editChatFragment = EditChatFragment.newInstance(model);
+                        editChatFragment.show(fragment.getChildFragmentManager(), "show");
+                    }
+                    else
+                        Toast.makeText(v.getContext(), "you can only change your own chat items", Toast.LENGTH_SHORT).show();
+                }
             }
 
         }

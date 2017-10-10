@@ -5,7 +5,8 @@
         <item
             android:id="@+id/home"
             android:icon="@drawable/news"
-            android:title="@string/home" />
+            android:title="@string/home"
+            />
         <item
             android:id="@+id/pet_shop"
             android:icon="@drawable/ic_shopping"
@@ -19,12 +20,12 @@
 
         <item
             android:id="@+id/favorites"
-            android:icon="@drawable/favorite"
+            android:icon="@drawable/ic_favorite"
             android:title="@string/favorites_" />
 
         <item
             android:id="@+id/pet_Chat"
-            android:icon="@drawable/training"
+            android:icon="@drawable/ic_chat"
             android:title="Pet Chat" />
 
 

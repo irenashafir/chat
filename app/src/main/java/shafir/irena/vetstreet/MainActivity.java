@@ -441,6 +441,5 @@ public class MainActivity extends AppCompatActivity
 
 
 // TODO: optional:
-//1. onclick on petChatFragment
-//2. onSwipe to delete favorites
+//1. onSwipe to delete favorites
 
