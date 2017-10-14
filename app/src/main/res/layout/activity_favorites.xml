@@ -71,7 +71,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toRightOf="@+id/ivImage"
-        android:layout_marginLeft="16dp" />
+        android:layout_marginLeft="24dp" />
 
     <FrameLayout
         android:id="@+id/frFavorites"
@@ -120,7 +120,7 @@
         android:id="@+id/ibUndoDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#fff555"
+        android:background="#d42674"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/ibImageReset"
         app:layout_constraintTop_toTopOf="@+id/ibImageReset"
@@ -133,7 +133,7 @@
         android:id="@+id/ibHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#47ff63"
+        android:background="#12f735"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/ibUndoDelete"
         app:layout_constraintTop_toTopOf="@+id/ibUndoDelete"

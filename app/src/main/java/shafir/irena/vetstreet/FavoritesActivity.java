@@ -224,12 +224,13 @@ public class FavoritesActivity extends AppCompatActivity implements ShareFavorit
                         .setNegativeButton("no way!", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                finish();
+                               dialog.dismiss();
                             }
                         }).setPositiveButton("Of course!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteAll(DB_FAVORITES);
+                        dialog.dismiss();
                     }
                 });
                 builder.show();

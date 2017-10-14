@@ -144,8 +144,6 @@ public class MainActivity extends AppCompatActivity
                             User user = new User(currentUser);
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
                             reference.setValue(user);
-
-                            Toast.makeText(MainActivity.this, "you're logged in", Toast.LENGTH_SHORT).show();
                         } else
                             Toast.makeText(MainActivity.this, "Authentication not complete", Toast.LENGTH_SHORT).show();
                     }
@@ -438,8 +436,4 @@ public class MainActivity extends AppCompatActivity
     }
 }
 
-
-
-// TODO: optional:
-//1. onSwipe to delete favorites
 

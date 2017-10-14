@@ -48,7 +48,6 @@ public class petWebViewFragment extends Fragment implements View.OnClickListener
 
     FirebaseDatabase mDatabase;
     FirebaseUser user;
-    Favorite tempFav;
     String FBTitle;
 
 

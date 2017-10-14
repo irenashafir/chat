@@ -52,4 +52,8 @@
     <string name="write_here">write here....</string>
     <string name="_10_10_2000">10.10.2000</string>
     <string name="user_text">user text</string>
+    <string name="latest_news_">Latest News</string>
+    <string name="dog_news_">Dog News</string>
+    <string name="cat_news_">Cat News</string>
+    <string name="dr_marty_becker_">dr marty becker</string>
 </resources>

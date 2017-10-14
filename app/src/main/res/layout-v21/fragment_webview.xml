@@ -8,19 +8,6 @@
     tools:context="shafir.irena.vetstreet.fragments.petWebViewFragment">
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fbLike"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="#55e7f7"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@android:drawable/btn_star" />
-
     <WebView
         android:id="@+id/webView"
         android:layout_width="0dp"
@@ -43,5 +30,19 @@
         tools:layout_constraintTop_creator="1">
 
     </WebView>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbLike"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="#55e7f7"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@mipmap/btn_star" />
 
 </android.support.constraint.ConstraintLayout>

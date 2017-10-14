@@ -67,9 +67,7 @@ public class PetChatFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         mAuth = FirebaseAuth.getInstance();
-
         setUpRecycler();
-
         return view;
     }
 
