@@ -89,8 +89,8 @@
         app:civ_shadow_color="#8BC34A"
         android:id="@+id/cvPuppy"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="48dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="40dp"
         app:layout_constraintLeft_toLeftOf="parent" />
 
 
@@ -106,8 +106,8 @@
         app:civ_shadow_color="#8BC34A"
         app:civ_shadow_radius="10"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="48dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="40dp"
         app:layout_constraintRight_toRightOf="parent" />
 
 

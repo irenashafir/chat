@@ -26,19 +26,9 @@ public class StreamIO {
 
     public static void write(String fileName, String data) throws IOException {
         BufferedWriter writer = null;
-        // 1. fileWriter
         try {
             writer = new BufferedWriter(new FileWriter(fileName));
-            // 2. call the write method
             writer.write(data);
-
-            // the write method has it's own "newLine" so we do'nt need it
-            // writer.newLine();
-
-            //3. close the stream
-            // writer.close();
-            // not need to close with BufferedWriter
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -48,7 +38,6 @@ public class StreamIO {
         }
     }
 
-    // method overload- we added the option boolean append
     public static void write(String fileName, String data, boolean append) throws IOException {
         BufferedWriter writer = null;
         try {
@@ -66,37 +55,9 @@ public class StreamIO {
 
 
     public static String read(String fileName) throws IOException {
-
-        //  String data = "";  // TODO: StringBuilder
-        // data = content read from file
-
         StringBuilder data = new StringBuilder();
-
-        // init file reader
-
-//        FileReader fileReader = new FileReader(fileName);
-//        BufferedReader reader = new BufferedReader(fileName);
-
         InputStream in = new FileInputStream(fileName);
         return read(in);
-
-//
-//        try ( BufferedReader reader = new BufferedReader(new FileReader(fileName))){
-//            String line = null;
-//            while ((line = reader.readLine()) != null ){
-//                data.append(line).append(System.lineSeparator());
-//            }
-//
-//            // not need to close if we put the resource in the try method
-//            // if we insert the source inside the "try" we'll have to close method
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return data.toString();
     }
 
 

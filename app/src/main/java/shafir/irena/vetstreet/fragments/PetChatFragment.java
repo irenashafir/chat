@@ -118,17 +118,15 @@ public class PetChatFragment extends Fragment {
     }
 
 
-        public static class ChatAdapter extends FirebaseRecyclerAdapter<ChatItem, ChatAdapter.ChatViewHolder> {
+        static class ChatAdapter extends FirebaseRecyclerAdapter<ChatItem, ChatAdapter.ChatViewHolder> {
             Activity activity;
             FirebaseUser mUser;
-            String userName;
             Fragment fragment;
 
-            public ChatAdapter(Activity activity, Query query, FirebaseUser user, Fragment fragment) {
+            ChatAdapter(Activity activity, Query query, FirebaseUser user, Fragment fragment) {
                 super(ChatItem.class, R.layout.chat_item, ChatViewHolder.class, query);
                 this.activity = activity;
                 this.mUser = user;
-                this.userName = user.getDisplayName();
                 this.fragment = fragment;
             }
 
@@ -143,7 +141,6 @@ public class PetChatFragment extends Fragment {
                     Glide.with(activity).load(R.drawable.com_facebook_profile_picture_blank_portrait)
                             .into(viewHolder.ivProfile);
                 }
-
                 viewHolder.model = model;
             }
 
@@ -153,7 +150,7 @@ public class PetChatFragment extends Fragment {
                 return new ChatViewHolder(view, fragment);
             }
 
-            public static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+             static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
                 TextView tvName;
                 TextView tvText;
                 TextView tvTime;
@@ -161,7 +158,7 @@ public class PetChatFragment extends Fragment {
                 ChatItem model;
                 Fragment fragment;
 
-                public ChatViewHolder(View itemView, Fragment fragment) {
+                 ChatViewHolder(View itemView, Fragment fragment) {
                     super(itemView);
                     tvName = (TextView) itemView.findViewById(R.id.tvName);
                     tvText = (TextView) itemView.findViewById(R.id.tvText);
@@ -179,7 +176,7 @@ public class PetChatFragment extends Fragment {
                         editChatFragment.show(fragment.getChildFragmentManager(), "show");
                     }
                     else
-                        Toast.makeText(v.getContext(), "you can only change your own chat items", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), "you can only change your own chat item", Toast.LENGTH_SHORT).show();
                 }
             }
 

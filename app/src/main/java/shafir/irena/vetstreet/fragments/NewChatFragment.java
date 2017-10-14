@@ -81,7 +81,8 @@ public class NewChatFragment extends BottomSheetDialogFragment {
             mDatabase.getReference(ARG_CHAT).push().setValue(chatItem);
             dismiss();
         } else if (!user.isAnonymous()) {
-            ChatItem chatItem = new ChatItem(new User(user),etText.getText().toString());
+            ChatItem chatItem = new ChatItem(new User(user.getDisplayName(),user.getPhotoUrl().toString(),
+                    user.getUid(), user.getEmail()), etText.getText().toString());
             mDatabase.getReference(ARG_CHAT).push().setValue(chatItem);
             dismiss();
         }

@@ -11,9 +11,9 @@ import org.joda.time.LocalDateTime;
 
 public class ChatItem implements Parcelable {
 
-    String userName;
-    String message;
-    String time;
+    private String userName;
+    private String message;
+    private String time;
     private String profileImage;
 
     public ChatItem() {

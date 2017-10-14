@@ -134,6 +134,7 @@ public class FavoritesActivity extends AppCompatActivity implements ShareFavorit
     public void onViewClicked() {
         newPic();
     }
+
     public void newPic() {
         if (!checkForPermissions()) return;
         EasyImage.openChooserWithGallery(this, "Choose a new Pic", 0);
