@@ -160,7 +160,7 @@ public class ShareFavoriteFragment extends BottomSheetDialogFragment {
         String url = getArguments().getString(ARG_URL);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(ARG_URL, url);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, url);
         sendIntent.setType("text/plain");
         if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivity(Intent.createChooser(sendIntent, getArguments().getString(ARG_TITLE)));
