@@ -21,9 +21,6 @@ import java.net.URLConnection;
  * Created by irena on 12/05/2017.
  */
 public class StreamIO {
-
-    //TODO: Discuss efficiency
-
     public static void write(String fileName, String data) throws IOException {
         BufferedWriter writer = null;
         try {

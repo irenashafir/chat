@@ -25,7 +25,7 @@
         android:layout_marginLeft="0dp"
         android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
-        android:src="@drawable/com_facebook_button_login_logo"
+        android:src="@mipmap/default_image"
         app:civ_border_color="#EEEEEE"
         app:civ_border_width="4dp"
         app:civ_shadow="true"

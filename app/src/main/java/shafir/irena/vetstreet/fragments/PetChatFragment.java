@@ -1,7 +1,6 @@
 package shafir.irena.vetstreet.fragments;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -85,7 +84,7 @@ public class PetChatFragment extends Fragment {
 
 
     private void setUpRecycler() {
-        ChatAdapter adapter = new ChatAdapter(getActivity(),mDatabase.getReference(ARG_CHAT), user, this);
+        ChatAdapter adapter = new ChatAdapter(mDatabase.getReference(ARG_CHAT), this);
         rvChat.setAdapter(adapter);
         rvChat.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabase.getReference(ARG_CHAT).addChildEventListener(new ChildEventListener() {
@@ -119,14 +118,10 @@ public class PetChatFragment extends Fragment {
 
 
         static class ChatAdapter extends FirebaseRecyclerAdapter<ChatItem, ChatAdapter.ChatViewHolder> {
-            Activity activity;
-            FirebaseUser mUser;
             Fragment fragment;
 
-            ChatAdapter(Activity activity, Query query, FirebaseUser user, Fragment fragment) {
+            ChatAdapter(Query query, Fragment fragment) {
                 super(ChatItem.class, R.layout.chat_item, ChatViewHolder.class, query);
-                this.activity = activity;
-                this.mUser = user;
                 this.fragment = fragment;
             }
 
@@ -136,9 +131,9 @@ public class PetChatFragment extends Fragment {
                 viewHolder.tvText.setText(model.getMessage());
                 viewHolder.tvTime.setText(model.getTime());
                 if (model.getProfileImage() != null) {
-                    Glide.with(activity).load(model.getProfileImage()).into(viewHolder.ivProfile);
+                    Glide.with(fragment.getContext()).load(model.getProfileImage()).into(viewHolder.ivProfile);
                 } else {
-                    Glide.with(activity).load(R.drawable.com_facebook_profile_picture_blank_portrait)
+                    Glide.with(fragment.getContext()).load(R.mipmap.default_image)
                             .into(viewHolder.ivProfile);
                 }
                 viewHolder.model = model;
@@ -146,11 +141,12 @@ public class PetChatFragment extends Fragment {
 
             @Override
             public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(activity).inflate(viewType, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
                 return new ChatViewHolder(view, fragment);
             }
 
-             static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
                 TextView tvName;
                 TextView tvText;
                 TextView tvTime;
